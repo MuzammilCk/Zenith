@@ -89,9 +89,9 @@ export default function App() {
 
   if (sessionLoading) {
     return (
-      <div className="min-h-screen bg-slate-900 flex flex-col justify-center items-center space-y-4">
-        <div className="w-12 h-12 border-4 border-red-600 border-t-transparent rounded-full animate-spin" />
-        <p className="text-slate-400 font-bold tracking-wide text-sm font-sans">SYNCHRONIZING DOJO PORTAL...</p>
+      <div className="min-h-screen bg-[var(--color-canvas)] flex flex-col justify-center items-center space-y-4">
+        <div className="spinner" />
+        <p className="body-strong text-[var(--color-ink-muted-48)]">Loading Dojo Portal...</p>
       </div>
     );
   }
@@ -142,8 +142,11 @@ export default function App() {
         content = <UserManagement token={token} />;
       } else {
         content = (
-          <div className="bg-red-50 text-red-800 p-6 rounded-xl border border-red-200 font-semibold text-center">
-            Access Denied: Instructor role does not have authorization to access user management.
+          <div className="card-utility text-center space-y-4">
+            <h2 className="display-md text-[var(--color-ink)]">Access Denied</h2>
+            <p className="lead text-[var(--color-ink-muted-48)]" style={{ fontSize: 21 }}>
+              Instructor role does not have authorization to access user management.
+            </p>
           </div>
         );
       }
@@ -153,14 +156,17 @@ export default function App() {
         content = <AuditLogs token={token} />;
       } else {
         content = (
-          <div className="bg-red-50 text-red-800 p-6 rounded-xl border border-red-200 font-semibold text-center">
-            Access Denied: Instructor role does not have authorization to view security trails.
+          <div className="card-utility text-center space-y-4">
+            <h2 className="display-md text-[var(--color-ink)]">Access Denied</h2>
+            <p className="lead text-[var(--color-ink-muted-48)]" style={{ fontSize: 21 }}>
+              Instructor role does not have authorization to view security trails.
+            </p>
           </div>
         );
       }
       break;
     default:
-      content = <div className="text-slate-500 font-bold">Content tab "{currentTab}" not found.</div>;
+      content = <div className="body-strong text-[var(--color-ink-muted-48)]">Content tab "{currentTab}" not found.</div>;
   }
 
   return (

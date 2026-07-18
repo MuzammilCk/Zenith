@@ -11,6 +11,7 @@ import {
   LogOut,
   ShieldAlert,
   Shield,
+  Menu,
 } from 'lucide-react';
 import { UserRole } from '../types.js';
 
@@ -34,11 +35,11 @@ export default function Layout({
   if (!currentUser) return <>{children}</>;
 
   const navItems = [
-    { id: 'dashboard', name: 'Dashboard', icon: TrendingUp, roles: [UserRole.ADMIN, UserRole.INSTRUCTOR] },
-    { id: 'students', name: 'Students Directory', icon: Users, roles: [UserRole.ADMIN, UserRole.INSTRUCTOR] },
-    { id: 'attendance', name: currentUser.role === UserRole.ADMIN ? 'View Attendance' : 'Mark Attendance', icon: CalendarCheck, roles: [UserRole.ADMIN, UserRole.INSTRUCTOR] },
-    { id: 'users', name: 'User Management', icon: Shield, roles: [UserRole.ADMIN] },
-    { id: 'audit-logs', name: 'Audit Logs', icon: ShieldAlert, roles: [UserRole.ADMIN] },
+    { id: 'dashboard', label: 'Dashboard', icon: TrendingUp, roles: [UserRole.ADMIN, UserRole.INSTRUCTOR] },
+    { id: 'students', label: 'Students', icon: Users, roles: [UserRole.ADMIN, UserRole.INSTRUCTOR] },
+    { id: 'attendance', label: currentUser.role === UserRole.ADMIN ? 'Attendance' : 'Mark Attendance', icon: CalendarCheck, roles: [UserRole.ADMIN, UserRole.INSTRUCTOR] },
+    { id: 'users', label: 'Users', icon: Shield, roles: [UserRole.ADMIN] },
+    { id: 'audit-logs', label: 'Audit Logs', icon: ShieldAlert, roles: [UserRole.ADMIN] },
   ];
 
   const allowedNavItems = navItems.filter((item) => item.roles.includes(currentUser.role));
@@ -49,117 +50,136 @@ export default function Layout({
   };
 
   return (
-    <div className="min-h-screen bg-[var(--color-canvas)] font-sans text-[var(--color-ink)] flex flex-col items-center px-2 py-4 md:px-4 md:py-8">
-      
-      {/* 800px Fixed Width Container */}
-      <div className="w-full max-w-[830px] flex flex-col shadow-2xl bg-[var(--color-canvas)] rounded-sm overflow-hidden">
-        
-        {/* Masthead Row (above chrome) */}
-        <div className="flex flex-col sm:flex-row justify-between items-start sm:items-end p-4 gap-3 relative bg-[var(--color-canvas)]">
-          <div className="flex items-center space-x-2 z-10 relative bg-white px-3 py-1 rounded-full border-2 border-[var(--color-primary)]">
-            <span className="text-[var(--color-primary)] font-display text-xl sm:text-2xl font-black italic tracking-tighter leading-none">DOJO</span>
-          </div>
-          
-          <div className="flex items-center space-x-2 bg-white px-2 py-1 rounded-xs border border-[var(--color-hairline)] text-xs">
-             <span className="ui-label text-[10px] sm:text-xs">LOGGED IN:</span>
-             <span className="font-bold text-xxs sm:text-xs">{currentUser.name} ({currentUser.role})</span>
-          </div>
-        </div>
-
-        {/* Primary Nav Bar (Carbon Slab) */}
-        <nav className="carbon-slab min-h-[36px] h-auto px-4 py-2 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
-          <div className="flex flex-wrap gap-2 items-center">
-             {allowedNavItems.map((item) => {
+    <div className="min-h-screen bg-[var(--color-canvas-parchment)] font-sans text-[var(--color-ink)] flex flex-col">
+      <nav className="sticky top-0 z-50 border-b border-white/10 bg-[var(--color-surface-black)]/95 text-[var(--color-on-dark)] backdrop-blur">
+        <div className="mx-auto flex h-14 w-full max-w-[1440px] items-center justify-between px-4 sm:px-6 lg:px-8">
+          <div className="flex items-center gap-5">
+            <button
+              onClick={() => handleTabClick('dashboard')}
+              className="display-md cursor-pointer text-[var(--color-on-dark)]"
+              style={{ fontSize: 21, letterSpacing: -0.28 }}
+            >
+              DOJO
+            </button>
+            <div className="hidden items-center gap-1 md:flex">
+              {allowedNavItems.map((item) => {
                 const isActive = currentTab === item.id;
                 return (
                   <button
                     key={item.id}
                     onClick={() => handleTabClick(item.id)}
-                    className={`ui-label text-xs sm:text-[13px] py-1 px-2.5 rounded-xs transition-colors cursor-pointer ${
-                      isActive ? 'bg-[var(--color-primary)] text-[var(--color-on-primary)]' : 'text-[var(--color-nav-gold)] hover:bg-white/10'
+                    className={`nav-link-ut rounded-full px-3 py-1.5 transition-all ${
+                      isActive
+                        ? 'bg-white/10 text-[var(--color-on-dark)]'
+                        : 'text-[var(--color-body-muted)] hover:bg-white/10 hover:text-[var(--color-on-dark)]'
                     }`}
                   >
-                    {item.name}
+                    {item.label}
                   </button>
                 );
-             })}
+              })}
+            </div>
           </div>
-          <div className="flex space-x-2 self-end sm:self-auto">
-            <button 
-              onClick={onLogout}
-              className="bg-[var(--color-amber)] text-[var(--color-carbon)] ui-label text-[11px] px-2.5 py-1 rounded-xs shadow-[inset_0_1px_0_rgba(255,255,255,0.5)] border-b border-[#a87a27] cursor-pointer hover:bg-[#ffbf4c]"
-            >
+          <div className="flex items-center gap-3">
+            <span className="caption hidden text-[var(--color-body-muted)] sm:block">{currentUser.name}</span>
+            <button onClick={onLogout} className="btn-dark-utility text-xs py-1 px-3">
+              <LogOut className="mr-1.5 h-3.5 w-3.5" />
               Sign Out
             </button>
+            <button
+              className="rounded-full p-1.5 text-[var(--color-body-muted)] transition-colors hover:bg-white/10 hover:text-white md:hidden"
+              onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
+            >
+              <Menu className="h-4.5 w-4.5" />
+            </button>
           </div>
-        </nav>
-
-        {/* Secondary Nav Strip */}
-        <div className="bg-[var(--color-canvas-soft)] min-h-[24px] h-auto px-4 py-1.5 flex flex-wrap items-center gap-x-4 gap-y-1 ui-label text-[10px] md:text-[11px] text-[var(--color-ink)] border-b border-[var(--color-chrome-indigo)]">
-           <span className="cursor-pointer hover:underline">Help & Support</span>
-           <span className="text-[var(--color-chrome-indigo)] hidden sm:inline">|</span>
-           <span className="cursor-pointer hover:underline">System Config</span>
-           <span className="text-[var(--color-chrome-indigo)] hidden sm:inline">|</span>
-           <span className="cursor-pointer hover:underline">Privacy Policy</span>
         </div>
+      </nav>
 
-        {/* Main Body Area */}
-        <main className="flex flex-col md:flex-row p-3 md:p-4 gap-4 min-h-[600px]">
-           
-           {/* Left Rail (Rotated Tabs) - Optional/Decorative */}
-           <div className="hidden md:flex w-8 flex-shrink-0 flex-col space-y-1">
-             <div className="bg-[var(--color-carbon)] text-[var(--color-canvas-soft)] ui-label text-[11px] py-6 px-1 flex items-center justify-center [writing-mode:vertical-lr] rotate-180 border-r border-black shadow-[inset_1px_0_0_#444]">
-                QUICK LINKS
-             </div>
-             <div className="bg-[var(--color-muted-indigo)] text-white/50 ui-label text-[11px] py-6 px-1 flex items-center justify-center [writing-mode:vertical-lr] rotate-180 border-r border-[#333]">
-                ARCHIVE
-             </div>
-           </div>
+      {isMobileMenuOpen && (
+        <div className="border-b border-[var(--color-hairline)] bg-[var(--color-surface-tile-2)] px-4 py-3 md:hidden">
+          {allowedNavItems.map((item) => {
+            const isActive = currentTab === item.id;
+            return (
+              <button
+                key={item.id}
+                onClick={() => handleTabClick(item.id)}
+                className={`block w-full rounded-lg px-3 py-2 text-left font-sans text-[17px] transition-colors ${
+                  isActive ? 'bg-white/10 text-[var(--color-on-dark)]' : 'text-[var(--color-body-muted)] hover:bg-white/10 hover:text-[var(--color-on-dark)]'
+                }`}
+              >
+                {item.label}
+              </button>
+            );
+          })}
+        </div>
+      )}
 
-           {/* Content Column */}
-           <div className="flex-1 flex flex-col space-y-4 overflow-hidden min-w-0">
-              {children}
-           </div>
-
-           {/* Right Action Rail */}
-           <aside className="w-full md:w-[220px] flex-shrink-0 flex flex-col space-y-4">
-              
-              {/* Promo / Info Box */}
-              <div className="bevel-plate-light p-3 rounded-md">
-                 <h3 className="ui-label text-[11px] mb-2 text-[var(--color-ink)]">SYSTEM STATUS</h3>
-                 <div className="bg-white p-2 rounded-sm border border-[var(--color-hairline)] text-xs">
-                    <p><strong>Environment:</strong> Local Mode</p>
-                    <p className="mt-1"><strong>Active:</strong> {new Date().toLocaleDateString()}</p>
-                 </div>
-              </div>
-
-              {/* Quick Actions */}
-              <div className="bevel-plate p-3 rounded-md">
-                 <h3 className="ui-label text-[11px] mb-2 text-[var(--color-ink)]">QUICK ACTIONS</h3>
-                 <div className="space-y-2">
-                    <button className="w-full flex items-center justify-between bg-[var(--color-carbon)] text-white ui-label text-[11px] p-2 hover:bg-black cursor-pointer">
-                      <span>Add Student</span>
-                      <div className="w-4 h-4 rounded-full bg-[var(--color-signal)] flex items-center justify-center text-white font-bold leading-none">›</div>
-                    </button>
-                    <button className="w-full flex items-center justify-between bg-[var(--color-carbon)] text-white ui-label text-[11px] p-2 hover:bg-black cursor-pointer">
-                      <span>Mark Attendance</span>
-                      <div className="w-4 h-4 rounded-full bg-[var(--color-signal)] flex items-center justify-center text-white font-bold leading-none">›</div>
-                    </button>
-                 </div>
-              </div>
-
-           </aside>
-        </main>
-
-        {/* Footer */}
-        <footer className="carbon-slab px-4 py-4 chamfered mt-8 flex flex-col sm:flex-row justify-between items-center gap-4 text-[var(--color-canvas-soft)] text-[10px] font-sans text-center sm:text-left">
-           <p>©2001-2026 DOJO SYSTEMS. ALL RIGHTS RESERVED.</p>
-           <div className="bg-[var(--color-amber)] text-[var(--color-carbon)] px-2 py-0.5 rounded-xs font-bold uppercase tracking-tighter">
-              DOJO - SECURE
-           </div>
-        </footer>
-
+      <div className="border-b border-[var(--color-hairline)] bg-[var(--color-canvas-parchment)]/90 frosted">
+        <div className="mx-auto flex w-full max-w-[1440px] items-center justify-between px-4 py-3 sm:px-6 lg:px-8">
+          <h2 className="tagline text-[var(--color-ink)]">
+            {currentTab === 'dashboard' && 'Karate Dojo Portal'}
+            {currentTab === 'students' && 'Students Directory'}
+            {currentTab === 'attendance' && 'Attendance Workspace'}
+            {currentTab === 'users' && 'User Administration'}
+            {currentTab === 'audit-logs' && 'System Security Trails'}
+          </h2>
+          <span className="fine-print text-[var(--color-ink-muted-48)]">
+            {new Date().toLocaleDateString('en-US', { weekday: 'long', month: 'long', day: 'numeric' })}
+          </span>
+        </div>
       </div>
+
+      <main className="mx-auto flex-1 w-full max-w-[1440px] px-4 py-6 sm:px-6 sm:py-8 lg:px-8 lg:py-10">
+        {children}
+      </main>
+
+      <footer className="border-t border-[var(--color-hairline)] bg-[var(--color-canvas-parchment)]">
+        <div className="mx-auto max-w-[1440px] px-4 py-8 sm:px-6 lg:px-8">
+          <div className="mb-10 grid grid-cols-2 gap-8 md:grid-cols-4">
+            <div>
+              <h3 className="caption-strong mb-3 text-[var(--color-ink)]">Dojo Portal</h3>
+              <ul className="space-y-2">
+                <li><span className="text-link fine-print cursor-pointer">About Karate Management</span></li>
+                <li><span className="text-link fine-print cursor-pointer">System Overview</span></li>
+                <li><span className="text-link fine-print cursor-pointer">Privacy Policy</span></li>
+                <li><span className="text-link fine-print cursor-pointer">Terms of Use</span></li>
+              </ul>
+            </div>
+            <div>
+              <h3 className="caption-strong mb-3 text-[var(--color-ink)]">Features</h3>
+              <ul className="space-y-2">
+                <li><span className="text-link fine-print cursor-pointer">Student Management</span></li>
+                <li><span className="text-link fine-print cursor-pointer">Attendance Tracking</span></li>
+                <li><span className="text-link fine-print cursor-pointer">Belt Rankings</span></li>
+                <li><span className="text-link fine-print cursor-pointer">Analytics</span></li>
+              </ul>
+            </div>
+            <div>
+              <h3 className="caption-strong mb-3 text-[var(--color-ink)]">For Dojos</h3>
+              <ul className="space-y-2">
+                <li><span className="text-link fine-print cursor-pointer">Pricing Plans</span></li>
+                <li><span className="text-link fine-print cursor-pointer">Enterprise Setup</span></li>
+                <li><span className="text-link fine-print cursor-pointer">API Docs</span></li>
+                <li><span className="text-link fine-print cursor-pointer">Support</span></li>
+              </ul>
+            </div>
+            <div>
+              <h3 className="caption-strong mb-3 text-[var(--color-ink)]">Resources</h3>
+              <ul className="space-y-2">
+                <li><span className="text-link fine-print cursor-pointer">Documentation</span></li>
+                <li><span className="text-link fine-print cursor-pointer">Report Issue</span></li>
+                <li><span className="text-link fine-print cursor-pointer">Feature Roadmap</span></li>
+                <li><span className="text-link fine-print cursor-pointer">System Status</span></li>
+              </ul>
+            </div>
+          </div>
+          <div className="flex flex-col items-center justify-between gap-3 border-t border-[var(--color-hairline)] pt-6 sm:flex-row">
+            <p className="fine-print text-[var(--color-ink-muted-48)]">Copyright 2026 Karate Dojo Portal. All rights reserved.</p>
+            <p className="fine-print text-[var(--color-ink-muted-48)]">Karate Dojo Portal</p>
+          </div>
+        </div>
+      </footer>
     </div>
   );
 }

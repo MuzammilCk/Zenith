@@ -4,7 +4,7 @@
  */
 
 import React, { useState } from 'react';
-import { Award, Lock, Mail, AlertCircle, Eye, EyeOff } from 'lucide-react';
+import { AlertCircle, Eye, EyeOff } from 'lucide-react';
 
 interface LoginProps {
   onLoginSuccess: (token: string, user: { id: string; name: string; email: string; role: any }) => void;
@@ -60,103 +60,70 @@ export default function Login({ onLoginSuccess }: LoginProps) {
   };
 
   return (
-    <div className="min-h-screen bg-[var(--color-canvas)] flex flex-col items-center pt-24 font-sans px-4">
-      <div className="w-full max-w-[830px] flex justify-center">
-        
-        {/* Main Form Panel */}
-        <div className="w-full max-w-[400px] shadow-[8px_8px_0_rgba(33,36,46,0.15)] bg-[var(--color-canvas)] mx-auto">
-          {/* Section Header */}
-          <div className="bg-[var(--color-canvas)] text-[var(--color-ink)] px-2 py-1.5 flex items-center border-b border-[var(--color-chrome-indigo)]">
-            <div className="w-3 h-3 bg-[var(--color-amber)] mr-2 flex-shrink-0" />
-            <h2 className="ui-label text-[11px] tracking-widest">≡ SECURE SYSTEM ACCESS</h2>
+    <div className="flex min-h-screen items-center justify-center bg-[var(--color-canvas-parchment)] px-4 py-10">
+      <div className="page-shell w-full max-w-6xl overflow-hidden">
+        <div className="grid lg:grid-cols-[1.05fr_0.95fr]">
+          <div className="bg-[var(--color-surface-black)] p-8 text-[var(--color-on-dark)] sm:p-10 lg:p-12">
+            <p className="pill-chip bg-white/10 text-white">Karate dojo portal</p>
+            <h1 className="display-lg mt-5 text-[var(--color-on-dark)]">A calmer way to run a busy dojo.</h1>
+            <p className="lead mt-4 text-[var(--color-body-muted)]" style={{ fontSize: 21 }}>
+              Set the tone with a focused workspace for admissions, attendance, promotions, and security.
+            </p>
+            <div className="mt-8 space-y-3 text-[var(--color-body-muted)]">
+              <div className="rounded-2xl border border-white/10 bg-white/5 px-4 py-3">Student records kept tidy and easy to review.</div>
+              <div className="rounded-2xl border border-white/10 bg-white/5 px-4 py-3">Daily attendance that stays quick enough for real classes.</div>
+              <div className="rounded-2xl border border-white/10 bg-white/5 px-4 py-3">Leadership tools for instructors and admins in one place.</div>
+            </div>
           </div>
 
-          <div className="bevel-plate-platinum p-6 flex flex-col space-y-4">
-            <div className="flex flex-col items-center pb-4 border-b border-dotted border-[var(--color-muted-indigo)]">
-               <div className="bg-white px-4 py-2 rounded-full border-2 border-[var(--color-primary)] shadow-sm">
-                 <span className="text-[var(--color-primary)] font-display text-3xl font-black italic tracking-tighter leading-none">DOJO</span>
-               </div>
-            </div>
+          <div className="bg-[var(--color-canvas)] p-8 sm:p-10 lg:p-12">
+            <h2 className="display-md mb-2 text-[var(--color-ink)]" style={{ fontSize: 28 }}>
+              Sign In
+            </h2>
+            <p className="body-strong mb-6 text-[var(--color-ink-muted-48)]">Access your dojo management dashboard</p>
 
             {error && (
-              <div className="bg-white border border-[var(--color-error)] text-[var(--color-error)] p-2 text-xs flex items-center space-x-2 rounded-xs">
-                <AlertCircle className="w-4 h-4 flex-shrink-0" />
-                <span className="font-bold">{error}</span>
+              <div className="mb-6 flex items-start gap-2 rounded-lg border border-[#e60012] bg-[#e60012]/5 p-3 text-[#e60012]">
+                <AlertCircle className="mt-0.5 h-5 w-5 flex-shrink-0" />
+                <span className="body-strong">{error}</span>
               </div>
             )}
 
-            <form onSubmit={handleSubmit} id="login-form" className="space-y-4">
-              
-              <div className="space-y-1">
-                 <label htmlFor="email-address" className="text-[12px] font-bold text-[var(--color-ink)]">E-mail Address:</label>
-                 <div className="relative">
-                    <input
-                      id="email-address"
-                      name="email"
-                      type="email"
-                      required
-                      value={email}
-                      onChange={(e) => setEmail(e.target.value)}
-                      className="w-full bg-white text-[var(--color-ink)] border border-[var(--color-hairline)] rounded-xs px-2 py-1 h-[24px] text-xs focus:outline-none focus:border-[var(--color-primary)]"
-                    />
-                 </div>
+            <form onSubmit={handleSubmit} id="login-form" className="space-y-5">
+              <div>
+                <label htmlFor="email-address" className="label-field">Email Address</label>
+                <input id="email-address" name="email" type="email" required value={email} onChange={(e) => setEmail(e.target.value)} className="input-field" placeholder="admin@karate.com" />
               </div>
 
-              <div className="space-y-1">
-                 <label htmlFor="password" className="text-[12px] font-bold text-[var(--color-ink)]">Password:</label>
-                 <div className="relative flex">
-                    <input
-                      id="password"
-                      name="password"
-                      type={showPassword ? 'text' : 'password'}
-                      required
-                      value={password}
-                      onChange={(e) => setPassword(e.target.value)}
-                      className="flex-1 bg-white text-[var(--color-ink)] border border-[var(--color-hairline)] rounded-xs px-2 py-1 h-[24px] text-xs focus:outline-none focus:border-[var(--color-primary)]"
-                    />
-                    <button
-                      type="button"
-                      onClick={() => setShowPassword(!showPassword)}
-                      className="ml-1 px-2 h-[24px] bg-[var(--color-canvas-soft)] border border-[var(--color-hairline)] rounded-xs flex items-center justify-center hover:bg-[var(--color-sky)] cursor-pointer"
-                    >
-                      {showPassword ? <EyeOff className="w-3 h-3 text-[var(--color-ink)]" /> : <Eye className="w-3 h-3 text-[var(--color-ink)]" />}
-                    </button>
-                 </div>
+              <div>
+                <label htmlFor="password" className="label-field">Password</label>
+                <div className="relative">
+                  <input id="password" name="password" type={showPassword ? 'text' : 'password'} required value={password} onChange={(e) => setPassword(e.target.value)} className="input-field pr-10" placeholder="Enter password" />
+                  <button type="button" onClick={() => setShowPassword(!showPassword)} className="absolute right-3 top-1/2 -translate-y-1/2 text-[var(--color-ink-muted-48)] hover:text-[var(--color-ink)]">
+                    {showPassword ? <EyeOff className="h-5 w-5" /> : <Eye className="h-5 w-5" />}
+                  </button>
+                </div>
               </div>
 
-              <div className="flex justify-end pt-2">
-                 <button
-                   type="submit"
-                   disabled={loading}
-                   className="bg-[var(--color-signal)] text-white ui-label text-[11px] px-6 py-2 rounded-xs border-b-2 border-[#b86105] hover:bg-[#ff9d38] cursor-pointer shadow-[inset_0_1px_0_rgba(255,255,255,0.4)] disabled:opacity-50"
-                   id="submit-login-btn"
-                 >
-                   {loading ? 'WAIT...' : 'SUBMIT'}
-                 </button>
-              </div>
-
+              <button type="submit" disabled={loading} className="btn-primary w-full" id="submit-login-btn">
+                {loading ? (
+                  <span className="flex items-center justify-center gap-2">
+                    <div className="spinner border-white/20 border-t-white" />
+                    Signing in...
+                  </span>
+                ) : (
+                  'Sign In'
+                )}
+              </button>
             </form>
 
-            <div className="pt-4 border-t border-dotted border-[var(--color-muted-indigo)]">
-               <p className="text-[10px] text-[var(--color-ink-soft)] mb-2 uppercase tracking-wide font-bold">Quick Sandbox Login</p>
-               <div className="flex flex-col space-y-2">
-                 <button 
-                   onClick={() => fillCredentials('admin')}
-                   className="w-full text-left px-2 py-1 text-xs font-bold text-[var(--color-ink)] hover:bg-white border border-[var(--color-hairline)] rounded-xs cursor-pointer bg-[var(--color-canvas-soft)]"
-                   id="sandbox-admin-btn"
-                 >
-                   › Admin Sensei
-                 </button>
-                 <button 
-                   onClick={() => fillCredentials('instructor')}
-                   className="w-full text-left px-2 py-1 text-xs font-bold text-[var(--color-ink)] hover:bg-white border border-[var(--color-hairline)] rounded-xs cursor-pointer bg-[var(--color-canvas-soft)]"
-                   id="sandbox-instructor-btn"
-                 >
-                   › Instructor Ken
-                 </button>
-               </div>
+            <div className="mt-8 border-t border-[var(--color-divider-soft)] pt-6">
+              <p className="caption-strong mb-3 text-[var(--color-ink-muted-48)]">Sandbox Quick Login</p>
+              <div className="flex gap-3">
+                <button onClick={() => fillCredentials('admin')} className="btn-utility-sm flex-1" id="sandbox-admin-btn">Admin Sensei</button>
+                <button onClick={() => fillCredentials('instructor')} className="btn-utility-sm flex-1" id="sandbox-instructor-btn">Instructor Ken</button>
+              </div>
             </div>
-
           </div>
         </div>
       </div>

@@ -14,41 +14,20 @@ interface BeltPromoterProps {
   onSuccess: () => void;
 }
 
-export default function BeltPromoter({
-  token,
-  student,
-  onClose,
-  onSuccess,
-}: BeltPromoterProps) {
-  const [newBelt, setNewBelt] = useState<BeltRank>(BeltRank.WHITE);
+export default function BeltPromoter({ token, student, onClose, onSuccess }: BeltPromoterProps) {
+  const beltOrder = [
+    BeltRank.WHITE, BeltRank.YELLOW, BeltRank.ORANGE, BeltRank.GREEN,
+    BeltRank.BLUE, BeltRank.PURPLE, BeltRank.BROWN, BeltRank.BLACK,
+  ];
+
+  const currentIdx = beltOrder.indexOf(student.currentBelt);
+  const eligibleBelts = beltOrder.slice(currentIdx + 1);
+
+  const [newBelt, setNewBelt] = useState<BeltRank>(eligibleBelts[0] || BeltRank.WHITE);
   const [date, setDate] = useState(new Date().toISOString().substring(0, 10));
   const [notes, setNotes] = useState('');
   const [error, setError] = useState<string | null>(null);
   const [submitting, setSubmitting] = useState(false);
-
-  // Karate Belt Progression Order
-  const beltOrder = [
-    BeltRank.WHITE,
-    BeltRank.YELLOW,
-    BeltRank.ORANGE,
-    BeltRank.GREEN,
-    BeltRank.BLUE,
-    BeltRank.PURPLE,
-    BeltRank.BROWN,
-    BeltRank.BLACK,
-  ];
-
-  const currentIdx = beltOrder.indexOf(student.currentBelt);
-
-  // Filter available belts to only show strictly higher ranks
-  const eligibleBelts = beltOrder.slice(currentIdx + 1);
-
-  // Set default selection to the next belt in order if available
-  useState(() => {
-    if (eligibleBelts.length > 0) {
-      setNewBelt(eligibleBelts[0]);
-    }
-  });
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -98,106 +77,84 @@ export default function BeltPromoter({
     if (b === BeltRank.BLUE) return 'bg-[#2563eb] text-white';
     if (b === BeltRank.PURPLE) return 'bg-[#9333ea] text-white';
     if (b === BeltRank.BROWN) return 'bg-[#92400e] text-[#fef3c7]';
-    return 'bg-[var(--color-carbon)] text-[var(--color-canvas)] border border-black';
+    return 'bg-[var(--color-ink)] text-white';
   };
 
   return (
-    <div className="fixed inset-0 bg-black/60 flex items-center justify-center p-4 z-40" id="belt-promoter-overlay">
-      <div className="bevel-plate rounded-sm w-full max-w-md shadow-2xl overflow-hidden flex flex-col">
-        
-        {/* Header */}
-        <div className="bg-[var(--color-canvas)] px-4 py-3 flex items-center justify-between border-b border-[var(--color-chrome-indigo)]">
-          <h3 className="ui-label text-[12px] text-[var(--color-ink)] tracking-widest flex items-center space-x-2">
-            <Award className="w-4 h-4 text-[var(--color-primary)]" />
-            <span>RANK PROMOTION EXAM</span>
-          </h3>
-          <button
-            onClick={onClose}
-            className="text-[var(--color-ink-soft)] hover:text-black transition-colors cursor-pointer p-1 rounded-xs hover:bg-[var(--color-canvas-soft)]"
-            id="close-promoter"
-          >
+    <div className="modal-overlay" id="belt-promoter-overlay" onClick={onClose}>
+      <div className="modal-content" style={{ maxWidth: 480 }} onClick={(e) => e.stopPropagation()}>
+        <div className="modal-header">
+          <h2 className="display-md text-[var(--color-ink)] flex items-center gap-2" style={{ fontSize: 28 }}>
+            <Award className="w-6 h-6 text-[var(--color-primary)]" />
+            Rank Promotion Exam
+          </h2>
+          <button onClick={onClose} className="btn-icon-circular" style={{ width: 36, height: 36 }} id="close-promoter">
             <X className="w-4 h-4" />
           </button>
         </div>
 
-        {/* Content */}
-        <form onSubmit={handleSubmit} className="p-6 bg-[var(--color-platinum)] space-y-4" id="belt-promotion-form">
+        <form onSubmit={handleSubmit} className="modal-body space-y-5" id="belt-promotion-form">
           {error && (
-            <div className="bg-white border border-[var(--color-error)] text-[var(--color-error)] p-3 rounded-xs flex items-start space-x-2 text-[11px] font-bold" id="promoter-error">
-              <AlertCircle className="w-4 h-4 flex-shrink-0 mt-0.5" />
-              <span>{error}</span>
+            <div className="flex items-start gap-2 p-3 border border-[#e60012] rounded-lg bg-[#e60012]/5" id="promoter-error">
+              <AlertCircle className="w-5 h-5 text-[#e60012] flex-shrink-0 mt-0.5" />
+              <span className="caption text-[#e60012]">{error}</span>
             </div>
           )}
 
-          {/* Student current rank display */}
-          <div className="bg-[var(--color-canvas-soft)] p-3 rounded-xs border border-[var(--color-hairline)] text-center">
-            <h4 className="text-[10px] ui-label text-[var(--color-ink-soft)]">PROMOTING STUDENT</h4>
-            <p className="text-xs font-bold text-[var(--color-ink)] mt-1">{student.name}</p>
-            
-            <div className="flex items-center justify-center space-x-3 mt-2">
-              <span className={`px-2 py-0.5 rounded-xs text-[10px] ui-label ${getBeltStyle(student.currentBelt)}`}>
-                {student.currentBelt}
-              </span>
-              <ArrowRight className="w-3 h-3 text-[var(--color-ink-soft)]" />
+          {/* Student current → target display */}
+          <div className="bg-[var(--color-canvas-parchment)] rounded-xl p-5 text-center space-y-2">
+            <p className="caption-strong text-[var(--color-ink-muted-48)]">Promoting Student</p>
+            <p className="body-strong text-[var(--color-ink)]" style={{ fontSize: 19 }}>{student.name}</p>
+            <div className="flex items-center justify-center gap-3">
+              <span className={`badge-belt ${getBeltStyle(student.currentBelt)}`}>{student.currentBelt}</span>
+              <ArrowRight className="w-4 h-4 text-[var(--color-ink-muted-48)]" />
               {eligibleBelts.length > 0 ? (
-                <span className={`px-2 py-0.5 rounded-xs text-[10px] ui-label ${getBeltStyle(newBelt)}`}>
-                  {newBelt}
-                </span>
+                <span className={`badge-belt ${getBeltStyle(newBelt)}`}>{newBelt}</span>
               ) : (
-                <span className="text-[10px] ui-label text-[var(--color-ink-soft)] italic">MAX RANK REACHED</span>
+                <span className="caption text-[var(--color-ink-muted-48)] italic">Max Rank Reached</span>
               )}
             </div>
           </div>
 
           {eligibleBelts.length === 0 ? (
-            <div className="text-center py-4 text-xs font-bold text-[var(--color-ink-soft)]">
-              🎓 This student has already achieved the highest rank (**Black Belt**). No further promotions are possible.
-            </div>
+            <p className="caption text-[var(--color-ink-muted-48)] text-center py-4">
+              This student has already achieved the highest rank (Black Belt). No further promotions are possible.
+            </p>
           ) : (
             <div className="space-y-4">
-              {/* New Belt Selection */}
               <div>
-                <label className="block text-[10px] ui-label text-[var(--color-ink-soft)] mb-1">
-                  TARGET BELT RANK
-                </label>
+                <label className="label-field">Target Belt Rank</label>
                 <select
                   value={newBelt}
                   onChange={(e: any) => setNewBelt(e.target.value)}
-                  className="w-full px-2 py-1.5 border border-[var(--color-hairline)] rounded-xs bg-white focus:outline-none focus:border-[var(--color-primary)] text-xs text-[var(--color-ink)] font-bold transition-all"
+                  className="select-field"
                   id="select-new-belt"
                 >
                   {eligibleBelts.map((belt) => (
-                    <option key={belt} value={belt}>
-                      {belt} Belt
-                    </option>
+                    <option key={belt} value={belt}>{belt} Belt</option>
                   ))}
                 </select>
               </div>
 
-              {/* Date */}
               <div>
-                <label className="block text-[10px] ui-label text-[var(--color-ink-soft)] mb-1">
-                  PROMOTION DATE
-                </label>
+                <label className="label-field">Promotion Date</label>
                 <input
                   type="date"
                   required
                   value={date}
                   onChange={(e) => setDate(e.target.value)}
-                  className="w-full px-2 py-1.5 border border-[var(--color-hairline)] rounded-xs bg-white focus:outline-none focus:border-[var(--color-primary)] text-xs text-[var(--color-ink)] font-mono font-bold transition-all"
+                  className="input-field"
                   id="promoter-date"
                 />
               </div>
 
-              {/* Notes */}
               <div>
-                <label className="block text-[10px] ui-label text-[var(--color-ink-soft)] mb-1">
-                  EXAMINER'S GRADING NOTES
-                </label>
+                <label className="label-field">Examiner's Grading Notes</label>
                 <textarea
                   value={notes}
                   onChange={(e) => setNotes(e.target.value)}
-                  className="w-full px-2 py-2 border border-[var(--color-hairline)] rounded-xs bg-white focus:outline-none focus:border-[var(--color-primary)] text-xs text-[var(--color-ink)] transition-all"
+                  className="input-field"
+                  style={{ resize: 'vertical', minHeight: 90 }}
                   placeholder="e.g. Demonstrated outstanding kata form and strong spirit during sparring..."
                   rows={3}
                   id="promoter-notes"
@@ -206,29 +163,21 @@ export default function BeltPromoter({
             </div>
           )}
 
-          {/* Action buttons */}
-          <div className="flex items-center justify-end space-x-3 pt-4 border-t border-dotted border-[var(--color-chrome-indigo)]">
-            <button
-              type="button"
-              onClick={onClose}
-              className="px-4 py-2 border border-[var(--color-hairline)] bg-[var(--color-carbon)] text-white ui-label rounded-xs text-[11px] transition-all cursor-pointer"
-              id="cancel-promotion-btn"
-            >
-              CLOSE
+          <div className="flex items-center justify-end gap-3 pt-4 border-t border-[var(--color-divider-soft)]">
+            <button type="button" onClick={onClose} className="btn-utility-sm" style={{ padding: '11px 22px', fontSize: 14 }} id="cancel-promotion-btn">
+              Close
             </button>
             {eligibleBelts.length > 0 && (
-              <button
-                type="submit"
-                disabled={submitting}
-                className="px-4 py-2 bg-[var(--color-signal)] text-white ui-label rounded-xs text-[11px] flex items-center space-x-2 shadow-[inset_0_1px_0_rgba(255,255,255,0.4)] border-b-2 border-[#b86105] hover:bg-[#ff9d38] disabled:opacity-50 transition-all cursor-pointer"
-                id="submit-promotion-btn"
-              >
+              <button type="submit" disabled={submitting} className="btn-primary" id="submit-promotion-btn">
                 {submitting ? (
-                  <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin" />
+                  <span className="flex items-center gap-2">
+                    <div className="spinner border-white/20 border-t-white" />
+                    Processing...
+                  </span>
                 ) : (
                   <>
-                    <Award className="w-4 h-4" />
-                    <span>CONFIRM UPGRADE</span>
+                    <Award className="w-4 h-4 mr-2" />
+                    Confirm Promotion
                   </>
                 )}
               </button>

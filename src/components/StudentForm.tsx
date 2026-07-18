@@ -14,12 +14,7 @@ interface StudentFormProps {
   onSaveSuccess: () => void;
 }
 
-export default function StudentForm({
-  token,
-  studentToEdit,
-  onClose,
-  onSaveSuccess,
-}: StudentFormProps) {
+export default function StudentForm({ token, studentToEdit, onClose, onSaveSuccess }: StudentFormProps) {
   const [batches, setBatches] = useState<Batch[]>([]);
   const [name, setName] = useState('');
   const [email, setEmail] = useState('');
@@ -60,7 +55,7 @@ export default function StudentForm({
         const data = await response.json();
         setBatches(data);
         if (data.length > 0 && !studentToEdit) {
-          setBatchId(data[0].id); // default selection
+          setBatchId(data[0].id);
         }
       }
     } catch (err) {
@@ -72,7 +67,6 @@ export default function StudentForm({
     e.preventDefault();
     setFormError(null);
 
-    // Frontend validations
     if (!name || name.trim().length < 2) {
       setFormError('Student name must be at least 2 characters.');
       return;
@@ -114,7 +108,7 @@ export default function StudentForm({
         batchId,
         joinedDate,
         notes: notes.trim(),
-        ...(!studentToEdit && { currentBelt }), // Belt rank only mutable on creation, promotions handled via Promotion flow
+        ...(!studentToEdit && { currentBelt }),
       };
 
       const response = await fetch(url, {
@@ -141,105 +135,83 @@ export default function StudentForm({
   };
 
   return (
-    <div className="fixed inset-0 bg-black/60 flex items-center justify-center p-4 z-40" id="student-form-overlay">
-      <div className="bevel-plate rounded-sm w-full max-w-2xl shadow-2xl overflow-hidden flex flex-col max-h-[90vh]">
-        
-        {/* Header */}
-        <div className="bg-[var(--color-canvas)] px-4 py-3 flex items-center justify-between border-b border-[var(--color-chrome-indigo)]">
-          <h3 className="ui-label text-[12px] text-[var(--color-ink)] tracking-widest" id="student-form-title">
-            ≡ {studentToEdit ? 'EDIT STUDENT PROFILE' : 'ENROLL NEW STUDENT'}
-          </h3>
-          <button
-            onClick={onClose}
-            className="text-[var(--color-ink-soft)] hover:text-black transition-colors cursor-pointer p-1 rounded-xs hover:bg-[var(--color-canvas-soft)]"
-            id="close-student-form"
-          >
+    <div className="modal-overlay" id="student-form-overlay" onClick={onClose}>
+      <div className="modal-content" onClick={(e) => e.stopPropagation()}>
+        <div className="modal-header">
+          <h2 className="display-md text-[var(--color-ink)]" style={{ fontSize: 28 }} id="student-form-title">
+            {studentToEdit ? 'Edit Student Profile' : 'Enroll New Student'}
+          </h2>
+          <button onClick={onClose} className="btn-icon-circular" style={{ width: 36, height: 36 }} id="close-student-form">
             <X className="w-4 h-4" />
           </button>
         </div>
 
-        {/* Form Body */}
-        <form onSubmit={handleSubmit} className="flex-1 overflow-y-auto p-6 bg-[var(--color-platinum)] space-y-4" id="student-form">
+        <form onSubmit={handleSubmit} className="modal-body space-y-5" id="student-form">
           {formError && (
-            <div className="bg-white border border-[var(--color-error)] text-[var(--color-error)] p-3 rounded-xs flex items-start space-x-2 text-[11px] font-bold" id="form-validation-error">
-              <AlertCircle className="w-4 h-4 flex-shrink-0" />
-              <span>{formError}</span>
+            <div className="flex items-start gap-2 p-3 border border-[#e60012] rounded-lg bg-[#e60012]/5" id="form-validation-error">
+              <AlertCircle className="w-5 h-5 text-[#e60012] flex-shrink-0 mt-0.5" />
+              <span className="caption text-[#e60012]">{formError}</span>
             </div>
           )}
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            {/* Full Name */}
             <div>
-              <label className="block text-[10px] ui-label text-[var(--color-ink-soft)] mb-1">
-                FULL NAME
-              </label>
+              <label className="label-field">Full Name</label>
               <input
                 type="text"
                 required
                 value={name}
                 onChange={(e) => setName(e.target.value)}
-                className="w-full px-2 py-1.5 border border-[var(--color-hairline)] rounded-xs bg-white focus:outline-none focus:border-[var(--color-primary)] text-xs text-[var(--color-ink)] font-bold transition-all"
+                className="input-field"
                 placeholder="Miyagi Chojun"
                 id="input-student-name"
               />
             </div>
 
-            {/* Email */}
             <div>
-              <label className="block text-[10px] ui-label text-[var(--color-ink-soft)] mb-1">
-                EMAIL ADDRESS
-              </label>
+              <label className="label-field">Email Address</label>
               <input
                 type="email"
                 required
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
-                className="w-full px-2 py-1.5 border border-[var(--color-hairline)] rounded-xs bg-white focus:outline-none focus:border-[var(--color-primary)] text-xs text-[var(--color-ink)] font-mono font-bold transition-all"
+                className="input-field"
                 placeholder="miyagi@dojo.com"
                 id="input-student-email"
               />
             </div>
 
-            {/* Phone */}
             <div>
-              <label className="block text-[10px] ui-label text-[var(--color-ink-soft)] mb-1">
-                PHONE NUMBER
-              </label>
+              <label className="label-field">Phone Number</label>
               <input
                 type="tel"
                 required
                 value={phone}
                 onChange={(e) => setPhone(e.target.value)}
-                className="w-full px-2 py-1.5 border border-[var(--color-hairline)] rounded-xs bg-white focus:outline-none focus:border-[var(--color-primary)] text-xs text-[var(--color-ink)] font-bold transition-all"
+                className="input-field"
                 placeholder="555-0155"
                 id="input-student-phone"
               />
             </div>
 
-            {/* Date of Birth */}
             <div>
-              <label className="block text-[10px] ui-label text-[var(--color-ink-soft)] mb-1">
-                DATE OF BIRTH
-              </label>
+              <label className="label-field">Date of Birth</label>
               <input
                 type="date"
                 required
                 value={dateOfBirth}
                 onChange={(e) => setDateOfBirth(e.target.value)}
-                className="w-full px-2 py-1.5 border border-[var(--color-hairline)] rounded-xs bg-white focus:outline-none focus:border-[var(--color-primary)] text-xs text-[var(--color-ink)] font-mono font-bold transition-all"
+                className="input-field"
                 id="input-student-dob"
               />
             </div>
 
-            {/* Gender */}
             <div>
-              <label className="block text-[10px] ui-label text-[var(--color-ink-soft)] mb-1">
-                GENDER
-              </label>
+              <label className="label-field">Gender</label>
               <select
                 value={gender}
                 onChange={(e: any) => setGender(e.target.value)}
-                className="w-full px-2 py-1.5 border border-[var(--color-hairline)] rounded-xs bg-white focus:outline-none focus:border-[var(--color-primary)] text-xs text-[var(--color-ink)] font-bold transition-all"
+                className="select-field"
                 id="input-student-gender"
               >
                 <option value="male">Male</option>
@@ -248,72 +220,56 @@ export default function StudentForm({
               </select>
             </div>
 
-            {/* Batch Assignment */}
             <div>
-              <label className="block text-[10px] ui-label text-[var(--color-ink-soft)] mb-1">
-                BATCH CLASS
-              </label>
+              <label className="label-field">Class Batch</label>
               <select
                 value={batchId}
                 onChange={(e) => setBatchId(e.target.value)}
-                className="w-full px-2 py-1.5 border border-[var(--color-hairline)] rounded-xs bg-white focus:outline-none focus:border-[var(--color-primary)] text-xs text-[var(--color-ink)] font-bold transition-all"
+                className="select-field"
                 id="input-student-batch"
               >
-                <option value="" disabled>Select a Class Batch</option>
+                <option value="" disabled>Select a Class</option>
                 {batches.map((b) => (
-                  <option key={b.id} value={b.id}>
-                    {b.name} ({b.schedule})
-                  </option>
+                  <option key={b.id} value={b.id}>{b.name} ({b.schedule})</option>
                 ))}
               </select>
             </div>
 
-            {/* Starting Belt Rank (Only on create) */}
             {!studentToEdit && (
               <div>
-                <label className="block text-[10px] ui-label text-[var(--color-ink-soft)] mb-1">
-                  STARTING BELT RANK
-                </label>
+                <label className="label-field">Starting Belt Rank</label>
                 <select
                   value={currentBelt}
                   onChange={(e: any) => setCurrentBelt(e.target.value)}
-                  className="w-full px-2 py-1.5 border border-[var(--color-hairline)] rounded-xs bg-white focus:outline-none focus:border-[var(--color-primary)] text-xs text-[var(--color-ink)] font-bold transition-all"
+                  className="select-field"
                   id="input-student-belt"
                 >
                   {Object.values(BeltRank).map((belt) => (
-                    <option key={belt} value={belt}>
-                      {belt} Belt
-                    </option>
+                    <option key={belt} value={belt}>{belt} Belt</option>
                   ))}
                 </select>
               </div>
             )}
 
-            {/* Enrollment Date */}
             <div>
-              <label className="block text-[10px] ui-label text-[var(--color-ink-soft)] mb-1">
-                JOINED DATE
-              </label>
+              <label className="label-field">Joined Date</label>
               <input
                 type="date"
                 required
                 value={joinedDate}
                 onChange={(e) => setJoinedDate(e.target.value)}
-                className="w-full px-2 py-1.5 border border-[var(--color-hairline)] rounded-xs bg-white focus:outline-none focus:border-[var(--color-primary)] text-xs text-[var(--color-ink)] font-mono font-bold transition-all"
+                className="input-field"
                 id="input-student-joined"
               />
             </div>
 
-            {/* Active Status (Only on edit) */}
             {studentToEdit && (
               <div>
-                <label className="block text-[10px] ui-label text-[var(--color-ink-soft)] mb-1">
-                  STATUS
-                </label>
+                <label className="label-field">Status</label>
                 <select
                   value={status}
                   onChange={(e: any) => setStatus(e.target.value)}
-                  className="w-full px-2 py-1.5 border border-[var(--color-hairline)] rounded-xs bg-white focus:outline-none focus:border-[var(--color-primary)] text-xs text-[var(--color-ink)] font-bold transition-all"
+                  className="select-field"
                   id="input-student-status"
                 >
                   <option value={StudentStatus.ACTIVE}>Active</option>
@@ -323,43 +279,33 @@ export default function StudentForm({
             )}
           </div>
 
-          {/* Notes */}
           <div>
-            <label className="block text-[10px] ui-label text-[var(--color-ink-soft)] mb-1">
-              DOJO NOTES / INJURY HISTORY
-            </label>
+            <label className="label-field">Dojo Notes / Injury History</label>
             <textarea
               value={notes}
               onChange={(e) => setNotes(e.target.value)}
-              className="w-full px-2 py-2 border border-[var(--color-hairline)] rounded-xs bg-white focus:outline-none focus:border-[var(--color-primary)] text-xs text-[var(--color-ink)] transition-all"
+              className="input-field"
+              style={{ resize: 'vertical', minHeight: 90 }}
               placeholder="Write anything important about training progress or physical conditions here..."
               rows={3}
               id="input-student-notes"
             />
           </div>
 
-          {/* Footer Action Buttons */}
-          <div className="flex items-center justify-end space-x-3 pt-4 border-t border-dotted border-[var(--color-chrome-indigo)]">
-            <button
-              type="button"
-              onClick={onClose}
-              className="px-4 py-2 border border-[var(--color-hairline)] bg-[var(--color-carbon)] text-white ui-label rounded-xs text-[11px] transition-all cursor-pointer"
-              id="cancel-student-form"
-            >
-              CANCEL
+          <div className="flex items-center justify-end gap-3 pt-4 border-t border-[var(--color-divider-soft)]">
+            <button type="button" onClick={onClose} className="btn-utility-sm" style={{ padding: '11px 22px', fontSize: 14 }} id="cancel-student-form">
+              Cancel
             </button>
-            <button
-              type="submit"
-              disabled={submitting}
-              className="px-4 py-2 bg-[var(--color-signal)] text-white ui-label rounded-xs text-[11px] flex items-center space-x-2 shadow-[inset_0_1px_0_rgba(255,255,255,0.4)] border-b-2 border-[#b86105] hover:bg-[#ff9d38] disabled:opacity-50 transition-all cursor-pointer"
-              id="submit-student-form"
-            >
+            <button type="submit" disabled={submitting} className="btn-primary" id="submit-student-form">
               {submitting ? (
-                <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin" />
+                <span className="flex items-center gap-2">
+                  <div className="spinner border-white/20 border-t-white" />
+                  Saving...
+                </span>
               ) : (
                 <>
-                  <Save className="w-4 h-4" />
-                  <span>SAVE PROFILE</span>
+                  <Save className="w-4 h-4 mr-2" />
+                  Save Profile
                 </>
               )}
             </button>
