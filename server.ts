@@ -3,14 +3,23 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
+import { config as loadEnv } from 'dotenv';
 import express from 'express';
 import path from 'path';
 import { createServer as createViteServer } from 'vite';
-import { apiRouter } from './src/routes/api.js';
+
+// Load .env.local before any other module reads process.env (JWT_SECRET, GEMINI_API_KEY, etc.).
+// This must run before src/routes/api.js is imported, since that chain pulls in
+// authService.ts, which reads process.env.JWT_SECRET at module-evaluation time.
+// A static top-level `import { apiRouter } ...` here would evaluate before this
+// call regardless of line order (ES module imports always resolve first), so the
+// router is imported dynamically below, inside createServer(), instead.
+loadEnv({ path: '.env.local' });
 
 const PORT = 3000;
 
 export async function createServer() {
+  const { apiRouter } = await import('./src/routes/api.js');
   const app = express();
 
   // Parse JSON bodies
