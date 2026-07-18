@@ -9,7 +9,7 @@ import { User, UserRole, LoginResponse } from '../types.js';
 
 const JWT_SECRET = process.env.JWT_SECRET || 'karate-master-secret-key-2026';
 
-function hashPassword(password: string): string {
+export function hashPassword(password: string): string {
   return crypto.createHash('sha256').update(password).digest('hex');
 }
 
@@ -68,6 +68,7 @@ export class AuthService {
   login(email: string, password: string): LoginResponse | null {
     const user = db.getUserByEmail(email);
     if (!user) return null;
+    if (user.status === 'inactive') return null;
 
     const hashedPassword = hashPassword(password);
     if (user.passwordHash !== hashedPassword) return null;

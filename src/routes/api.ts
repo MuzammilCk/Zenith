@@ -5,7 +5,7 @@
 
 import { Router, Response } from 'express';
 import { db } from '../db/database.js';
-import { authService } from '../services/authService.js';
+import { authService, hashPassword } from '../services/authService.js';
 import { authenticate, requireRole, AuthenticatedRequest } from './middleware.js';
 import { UserRole, BeltRank, StudentStatus, AttendanceStatus } from '../types.js';
 
@@ -62,6 +62,165 @@ apiRouter.get('/auth/me', authenticate as any, (req: AuthenticatedRequest, res) 
     email: user.email,
     role: user.role,
   });
+});
+
+// --- Users / Instructors Management Endpoints (Admin only) ---
+
+// GET /api/users
+apiRouter.get('/users', [authenticate as any, requireRole([UserRole.ADMIN]) as any], (req: AuthenticatedRequest, res: Response) => {
+  const users = db.getUsers();
+  const sanitizedUsers = users.map(u => {
+    const { passwordHash, ...rest } = u;
+    return rest;
+  });
+  res.json(sanitizedUsers);
+});
+
+// GET /api/users/:id
+apiRouter.get('/users/:id', [authenticate as any, requireRole([UserRole.ADMIN]) as any], (req: AuthenticatedRequest, res: Response) => {
+  const user = db.getUserById(req.params.id);
+  if (!user) {
+    res.status(404).json({ error: 'User not found.' });
+    return;
+  }
+  const { passwordHash, ...sanitized } = user;
+  res.json(sanitized);
+});
+
+// POST /api/users
+apiRouter.post('/users', [authenticate as any, requireRole([UserRole.ADMIN]) as any], (req: AuthenticatedRequest, res: Response) => {
+  const { name, email, password, role, status } = req.body;
+
+  if (!name || name.trim().length < 2) {
+    res.status(400).json({ error: 'Name is required.' });
+    return;
+  }
+  if (!email || !isValidEmail(email)) {
+    res.status(400).json({ error: 'Valid email address is required.' });
+    return;
+  }
+  if (!password || password.length < 6) {
+    res.status(400).json({ error: 'Password must be at least 6 characters.' });
+    return;
+  }
+  if (role && ![UserRole.ADMIN, UserRole.INSTRUCTOR].includes(role)) {
+    res.status(400).json({ error: 'Invalid user role.' });
+    return;
+  }
+
+  const existing = db.getUserByEmail(email);
+  if (existing) {
+    res.status(400).json({ error: 'A user with this email already exists.' });
+    return;
+  }
+
+  const newUser = db.createUser({
+    name: name.trim(),
+    email: email.toLowerCase().trim(),
+    passwordHash: hashPassword(password),
+    role: role || UserRole.INSTRUCTOR,
+    status: status || 'active',
+    createdBy: req.user!.id,
+  });
+
+  db.createAuditLog(req.user!.id, 'CREATE_USER', `Created user account for ${newUser.name} (${newUser.role}).`);
+  
+  const { passwordHash, ...sanitized } = newUser;
+  res.status(201).json(sanitized);
+});
+
+// PUT /api/users/:id
+apiRouter.put('/users/:id', [authenticate as any, requireRole([UserRole.ADMIN]) as any], (req: AuthenticatedRequest, res: Response) => {
+  const user = db.getUserById(req.params.id);
+  if (!user) {
+    res.status(404).json({ error: 'User not found.' });
+    return;
+  }
+
+  const { name, email, password, role, status } = req.body;
+  const updates: any = {};
+
+  if (name !== undefined) {
+    if (name.trim().length < 2) {
+      res.status(400).json({ error: 'Name must be at least 2 characters.' });
+      return;
+    }
+    updates.name = name.trim();
+  }
+
+  if (email !== undefined) {
+    if (!isValidEmail(email)) {
+      res.status(400).json({ error: 'Invalid email address.' });
+      return;
+    }
+    const existing = db.getUserByEmail(email);
+    if (existing && existing.id !== req.params.id) {
+      res.status(400).json({ error: 'A user with this email already exists.' });
+      return;
+    }
+    updates.email = email.toLowerCase().trim();
+  }
+
+  if (password !== undefined && password !== '') {
+    if (password.length < 6) {
+      res.status(400).json({ error: 'Password must be at least 6 characters.' });
+      return;
+    }
+    updates.passwordHash = hashPassword(password);
+  }
+
+  if (role !== undefined) {
+    if (![UserRole.ADMIN, UserRole.INSTRUCTOR].includes(role)) {
+      res.status(400).json({ error: 'Invalid role.' });
+      return;
+    }
+    if (req.params.id === req.user!.id && role !== user.role) {
+      res.status(400).json({ error: 'You cannot change your own role.' });
+      return;
+    }
+    updates.role = role;
+  }
+
+  if (status !== undefined) {
+    if (!['active', 'inactive'].includes(status)) {
+      res.status(400).json({ error: 'Status must be active or inactive.' });
+      return;
+    }
+    if (req.params.id === req.user!.id && status === 'inactive') {
+      res.status(400).json({ error: 'You cannot deactivate your own account.' });
+      return;
+    }
+    updates.status = status;
+  }
+
+  const updatedUser = db.updateUser(req.params.id, updates);
+  if (!updatedUser) {
+    res.status(500).json({ error: 'Failed to update user.' });
+    return;
+  }
+
+  db.createAuditLog(req.user!.id, 'UPDATE_USER', `Updated user account details for ${updatedUser.name}.`);
+
+  const { passwordHash, ...sanitized } = updatedUser;
+  res.json(sanitized);
+});
+
+// DELETE /api/users/:id
+apiRouter.delete('/users/:id', [authenticate as any, requireRole([UserRole.ADMIN]) as any], (req: AuthenticatedRequest, res: Response) => {
+  const user = db.getUserById(req.params.id);
+  if (!user) {
+    res.status(404).json({ error: 'User not found.' });
+    return;
+  }
+
+  if (req.params.id === req.user!.id) {
+    res.status(400).json({ error: 'You cannot delete your own account.' });
+    return;
+  }
+
+  db.deleteUser(req.params.id);
+  db.createAuditLog(req.user!.id, 'DELETE_USER', `Deleted user account for ${user.name}.`);
+  res.json({ success: true, message: 'User deleted successfully.' });
 });
 
 // --- Batches Endpoints ---

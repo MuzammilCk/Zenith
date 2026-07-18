@@ -5,6 +5,7 @@
 
 import { Request, Response, NextFunction } from 'express';
 import { authService } from '../services/authService.js';
+import { db } from '../db/database.js';
 import { UserRole } from '../types.js';
 
 export interface AuthenticatedRequest extends Request {
@@ -26,6 +27,17 @@ export function authenticate(req: AuthenticatedRequest, res: Response, next: Nex
 
   if (!decoded) {
     res.status(401).json({ error: 'Invalid or expired token. Please log in again.' });
+    return;
+  }
+
+  // Enforce status active check
+  const user = db.getUserById(decoded.id);
+  if (!user) {
+    res.status(401).json({ error: 'User account not found.' });
+    return;
+  }
+  if (user.status === 'inactive') {
+    res.status(403).json({ error: 'Access denied. Account is inactive.' });
     return;
   }
 

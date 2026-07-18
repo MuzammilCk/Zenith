@@ -11,6 +11,7 @@ import StudentList from './components/StudentList.js';
 import StudentDetail from './components/StudentDetail.js';
 import AttendanceMarker from './components/AttendanceMarker.js';
 import AuditLogs from './components/AuditLogs.js';
+import UserManagement from './components/UserManagement.js';
 import { UserRole } from './types.js';
 
 export default function App() {
@@ -134,7 +135,18 @@ export default function App() {
       }
       break;
     case 'attendance':
-      content = <AttendanceMarker token={token} />;
+      content = <AttendanceMarker token={token} userRole={currentUser.role} />;
+      break;
+    case 'users':
+      if (currentUser.role === UserRole.ADMIN) {
+        content = <UserManagement token={token} />;
+      } else {
+        content = (
+          <div className="bg-red-50 text-red-800 p-6 rounded-xl border border-red-200 font-semibold text-center">
+            Access Denied: Instructor role does not have authorization to access user management.
+          </div>
+        );
+      }
       break;
     case 'audit-logs':
       if (currentUser.role === UserRole.ADMIN) {

@@ -173,6 +173,7 @@ export class RelationalDB {
 
   createUser(user: Omit<User, 'id' | 'createdAt'>): User {
     const newUser: User = {
+      status: 'active',
       ...user,
       id: `u-${Date.now()}-${Math.floor(Math.random() * 1000)}`,
       createdAt: new Date().toISOString(),
@@ -180,6 +181,29 @@ export class RelationalDB {
     this.schema.users.push(newUser);
     this.save();
     return newUser;
+  }
+
+  updateUser(id: string, updates: Partial<Omit<User, 'id' | 'createdAt'>>): User | undefined {
+    const idx = this.schema.users.findIndex((u) => u.id === id);
+    if (idx === -1) return undefined;
+    const updatedUser = {
+      ...this.schema.users[idx],
+      ...updates,
+      updatedAt: new Date().toISOString(),
+    };
+    this.schema.users[idx] = updatedUser;
+    this.save();
+    return updatedUser;
+  }
+
+  deleteUser(id: string): boolean {
+    const initialLen = this.schema.users.length;
+    this.schema.users = this.schema.users.filter((u) => u.id !== id);
+    if (this.schema.users.length < initialLen) {
+      this.save();
+      return true;
+    }
+    return false;
   }
 
   // --- Batches Operations ---

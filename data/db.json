@@ -9,12 +9,13 @@
       "createdAt": "2026-01-01T00:00:00.000Z"
     },
     {
+      "status": "active",
       "name": "Instructor Ken",
       "email": "instructor@karate.com",
       "passwordHash": "c1437a55f6e93b7049c4064af1b0920974e383a435283f5d0b0496ee4a8a47b5",
       "role": "instructor",
-      "id": "u-1784369631045-17",
-      "createdAt": "2026-07-18T10:13:51.045Z"
+      "id": "u-1784371785313-565",
+      "createdAt": "2026-07-18T10:49:45.313Z"
     }
   ],
   "batches": [
@@ -48,46 +49,116 @@
   "belt_history": [],
   "audit_logs": [
     {
-      "id": "log-1784369631109-923",
+      "id": "log-1784371785368-680",
       "userId": "u-1",
       "action": "USER_LOGIN",
       "details": "User Admin Sensei logged in successfully.",
-      "createdAt": "2026-07-18T10:13:51.109Z"
+      "createdAt": "2026-07-18T10:49:45.368Z"
     },
     {
-      "id": "log-1784369631128-878",
-      "userId": "u-1784369631045-17",
+      "id": "log-1784371785385-351",
+      "userId": "u-1784371785313-565",
       "action": "USER_LOGIN",
       "details": "User Instructor Ken logged in successfully.",
-      "createdAt": "2026-07-18T10:13:51.128Z"
+      "createdAt": "2026-07-18T10:49:45.385Z"
     },
     {
-      "id": "log-1784369631147-618",
+      "id": "log-1784371785405-942",
       "userId": "u-1",
       "action": "CREATE_STUDENT",
       "details": "Added student Integration Karateka.",
-      "createdAt": "2026-07-18T10:13:51.147Z"
+      "createdAt": "2026-07-18T10:49:45.405Z"
     },
     {
-      "id": "log-1784369631180-224",
-      "userId": "u-1784369631045-17",
+      "id": "log-1784371785436-537",
+      "userId": "u-1784371785313-565",
       "action": "MARK_ATTENDANCE",
       "details": "Marked attendance for Dragons (Kids 5-10) on 2026-07-18 (Tournament Practice).",
-      "createdAt": "2026-07-18T10:13:51.180Z"
+      "createdAt": "2026-07-18T10:49:45.436Z"
     },
     {
-      "id": "log-1784369631203-348",
+      "id": "log-1784371785463-895",
       "userId": "u-1",
       "action": "PROMOTE_STUDENT",
       "details": "Promoted student Integration Karateka from White to Yellow.",
-      "createdAt": "2026-07-18T10:13:51.203Z"
+      "createdAt": "2026-07-18T10:49:45.463Z"
     },
     {
-      "id": "log-1784369631214-556",
+      "id": "log-1784371785475-246",
       "userId": "u-1",
       "action": "DELETE_STUDENT",
       "details": "Deleted student Integration Karateka and cascaded records.",
-      "createdAt": "2026-07-18T10:13:51.214Z"
+      "createdAt": "2026-07-18T10:49:45.475Z"
+    },
+    {
+      "id": "log-1784371785484-397",
+      "userId": "u-1",
+      "action": "CREATE_USER",
+      "details": "Created user account for Instructor Bob (instructor).",
+      "createdAt": "2026-07-18T10:49:45.484Z"
+    },
+    {
+      "id": "log-1784371785492-268",
+      "userId": "u-1784371785483-838",
+      "action": "USER_LOGIN",
+      "details": "User Instructor Bob logged in successfully.",
+      "createdAt": "2026-07-18T10:49:45.492Z"
+    },
+    {
+      "id": "log-1784371785497-141",
+      "userId": "u-1",
+      "action": "UPDATE_USER",
+      "details": "Updated user account details for Instructor Bob.",
+      "createdAt": "2026-07-18T10:49:45.497Z"
+    },
+    {
+      "id": "log-1784371785510-867",
+      "userId": "u-1",
+      "action": "DELETE_USER",
+      "details": "Deleted user account for Instructor Bob.",
+      "createdAt": "2026-07-18T10:49:45.510Z"
+    },
+    {
+      "id": "log-1784371925013-180",
+      "userId": "u-1",
+      "action": "USER_LOGIN",
+      "details": "User Admin Sensei logged in successfully.",
+      "createdAt": "2026-07-18T10:52:05.013Z"
+    },
+    {
+      "id": "log-1784371928948-561",
+      "userId": "u-1",
+      "action": "USER_LOGIN",
+      "details": "User Admin Sensei logged in successfully.",
+      "createdAt": "2026-07-18T10:52:08.948Z"
+    },
+    {
+      "id": "log-1784371939027-60",
+      "userId": "u-1",
+      "action": "USER_LOGIN",
+      "details": "User Admin Sensei logged in successfully.",
+      "createdAt": "2026-07-18T10:52:19.027Z"
+    },
+    {
+      "id": "log-1784371948320-756",
+      "userId": "u-1",
+      "action": "USER_LOGIN",
+      "details": "User Admin Sensei logged in successfully.",
+      "createdAt": "2026-07-18T10:52:28.320Z"
+    },
+    {
+      "id": "log-1784371955977-497",
+      "userId": "u-1784371785313-565",
+      "action": "USER_LOGIN",
+      "details": "User Instructor Ken logged in successfully.",
+      "createdAt": "2026-07-18T10:52:35.977Z"
+    },
+    {
+      "id": "log-1784371964387-11",
+      "userId": "u-1784371785313-565",
+      "action": "USER_LOGIN",
+      "details": "User Instructor Ken logged in successfully.",
+      "createdAt": "2026-07-18T10:52:44.387Z"
     }
   ]
 }

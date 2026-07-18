@@ -224,6 +224,88 @@ test('Full-Stack Integration Test Suite', async (t) => {
     assert.strictEqual(adminDelRes.status, 200, 'Admin can delete student record successfully');
   });
 
+  await t.test('7. User Management: Admin creating, editing, deactivating and deleting instructors', async () => {
+    // 1. Admin creates Instructor Bob
+    const createRes = await fetch(`${BASE_URL}/users`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${adminToken}`,
+      },
+      body: JSON.stringify({
+        name: 'Instructor Bob',
+        email: 'bob@karate.com',
+        password: 'bobpassword123',
+        role: UserRole.INSTRUCTOR,
+      }),
+    });
+    assert.strictEqual(createRes.status, 201, 'Admin should successfully create Instructor Bob');
+    const bobData = await createRes.json();
+    assert.ok(bobData.id, 'Should return created user ID');
+    const bobId = bobData.id;
+
+    // 2. Admin retrieves user list
+    const listRes = await fetch(`${BASE_URL}/users`, {
+      headers: { Authorization: `Bearer ${adminToken}` },
+    });
+    assert.strictEqual(listRes.status, 200, 'Admin can list users');
+    const userList = await listRes.json();
+    const bobInList = userList.find((u: any) => u.id === bobId);
+    assert.ok(bobInList, 'Instructor Bob should exist in the user list');
+    assert.strictEqual(bobInList.status, 'active', 'Instructor Bob should be active initially');
+
+    // 3. Instructor Bob logs in successfully
+    const bobLoginRes = await fetch(`${BASE_URL}/auth/login`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ email: 'bob@karate.com', password: 'bobpassword123' }),
+    });
+    assert.strictEqual(bobLoginRes.status, 200, 'Instructor Bob should login successfully');
+    const bobLoginData = await bobLoginRes.json();
+    assert.ok(bobLoginData.token, 'Should return login token for Bob');
+    const bobToken = bobLoginData.token;
+
+    // 4. Admin deactivates Instructor Bob
+    const deactivateRes = await fetch(`${BASE_URL}/users/${bobId}`, {
+      method: 'PUT',
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${adminToken}`,
+      },
+      body: JSON.stringify({ status: 'inactive' }),
+    });
+    assert.strictEqual(deactivateRes.status, 200, 'Deactivation should succeed');
+
+    // 5. Instructor Bob attempts to load details - should be BLOCKED due to inactive status
+    const bobMeRes = await fetch(`${BASE_URL}/auth/me`, {
+      headers: { Authorization: `Bearer ${bobToken}` },
+    });
+    assert.strictEqual(bobMeRes.status, 403, 'Should block de-activated Bob with 403 Forbidden');
+
+    // 6. Instructor Bob attempts login - should be BLOCKED
+    const bobLoginFailedRes = await fetch(`${BASE_URL}/auth/login`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ email: 'bob@karate.com', password: 'bobpassword123' }),
+    });
+    assert.ok([401, 403].includes(bobLoginFailedRes.status), 'Deactivated account login must fail with 401 or 403');
+
+    // 7. Admin deletes Instructor Bob
+    const deleteBobRes = await fetch(`${BASE_URL}/users/${bobId}`, {
+      method: 'DELETE',
+      headers: { Authorization: `Bearer ${adminToken}` },
+    });
+    assert.strictEqual(deleteBobRes.status, 200, 'Admin can delete Bob');
+
+    // 8. Admin retrieves user list - Bob should be gone
+    const listFinalRes = await fetch(`${BASE_URL}/users`, {
+      headers: { Authorization: `Bearer ${adminToken}` },
+    });
+    const finalUserList = await listFinalRes.json();
+    const bobInFinalList = finalUserList.find((u: any) => u.id === bobId);
+    assert.ok(!bobInFinalList, 'Instructor Bob should be completely deleted from list');
+  });
+
   // Close the server down cleanly
   server.close();
 });

@@ -14,6 +14,7 @@ import {
   Menu,
   X,
   Award,
+  Shield,
 } from 'lucide-react';
 import { UserRole } from '../types.js';
 
@@ -39,7 +40,8 @@ export default function Layout({
   const navItems = [
     { id: 'dashboard', name: 'Dashboard', icon: TrendingUp, roles: [UserRole.ADMIN, UserRole.INSTRUCTOR] },
     { id: 'students', name: 'Students Directory', icon: Users, roles: [UserRole.ADMIN, UserRole.INSTRUCTOR] },
-    { id: 'attendance', name: 'Mark Attendance', icon: CalendarCheck, roles: [UserRole.ADMIN, UserRole.INSTRUCTOR] },
+    { id: 'attendance', name: currentUser.role === UserRole.ADMIN ? 'View Attendance' : 'Mark Attendance', icon: CalendarCheck, roles: [UserRole.ADMIN, UserRole.INSTRUCTOR] },
+    { id: 'users', name: 'User Management', icon: Shield, roles: [UserRole.ADMIN] },
     { id: 'audit-logs', name: 'Audit Logs', icon: ShieldAlert, roles: [UserRole.ADMIN] },
   ];
 

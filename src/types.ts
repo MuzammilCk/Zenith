@@ -14,7 +14,11 @@ export interface User {
   email: string;
   passwordHash: string;
   role: UserRole;
+  status?: 'active' | 'inactive';
+  createdBy?: string;
   createdAt: string;
+  updatedAt?: string;
+  lastLogin?: string;
 }
 
 export enum BeltRank {

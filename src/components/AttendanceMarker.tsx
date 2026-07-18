@@ -15,13 +15,15 @@ import {
   CheckCircle,
   ArrowRight,
 } from 'lucide-react';
-import { Batch, Student, AttendanceStatus } from '../types.js';
+import { Batch, Student, AttendanceStatus, UserRole } from '../types.js';
 
 interface AttendanceMarkerProps {
   token: string;
+  userRole: UserRole;
 }
 
-export default function AttendanceMarker({ token }: AttendanceMarkerProps) {
+export default function AttendanceMarker({ token, userRole }: AttendanceMarkerProps) {
+  const isAdmin = userRole === UserRole.ADMIN;
   const [batches, setBatches] = useState<Batch[]>([]);
   const [selectedBatchId, setSelectedBatchId] = useState('');
   const [date, setDate] = useState(new Date().toISOString().substring(0, 10));
@@ -302,25 +304,31 @@ export default function AttendanceMarker({ token }: AttendanceMarkerProps) {
             </div>
 
             {/* Bulk mark triggers */}
-            <div className="flex items-center space-x-2">
-              <span className="text-xxs font-bold text-slate-400 uppercase tracking-widest mr-2">Quick Mark:</span>
-              <button
-                type="button"
-                onClick={() => handleBulkMark(AttendanceStatus.PRESENT)}
-                className="px-3 py-1 bg-emerald-950/40 text-emerald-400 border border-emerald-900 rounded text-xxs font-extrabold uppercase hover:bg-emerald-900 hover:text-white transition-all cursor-pointer"
-                id="bulk-present-btn"
-              >
-                All Present
-              </button>
-              <button
-                type="button"
-                onClick={() => handleBulkMark(AttendanceStatus.ABSENT)}
-                className="px-3 py-1 bg-red-950/40 text-red-400 border border-red-900 rounded text-xxs font-extrabold uppercase hover:bg-red-900 hover:text-white transition-all cursor-pointer"
-                id="bulk-absent-btn"
-              >
-                All Absent
-              </button>
-            </div>
+            {!isAdmin ? (
+              <div className="flex items-center space-x-2">
+                <span className="text-xxs font-bold text-slate-400 uppercase tracking-widest mr-2">Quick Mark:</span>
+                <button
+                  type="button"
+                  onClick={() => handleBulkMark(AttendanceStatus.PRESENT)}
+                  className="px-3 py-1 bg-emerald-950/40 text-emerald-400 border border-emerald-900 rounded text-xxs font-extrabold uppercase hover:bg-emerald-900 hover:text-white transition-all cursor-pointer"
+                  id="bulk-present-btn"
+                >
+                  All Present
+                </button>
+                <button
+                  type="button"
+                  onClick={() => handleBulkMark(AttendanceStatus.ABSENT)}
+                  className="px-3 py-1 bg-red-950/40 text-red-400 border border-red-900 rounded text-xxs font-extrabold uppercase hover:bg-red-900 hover:text-white transition-all cursor-pointer"
+                  id="bulk-absent-btn"
+                >
+                  All Absent
+                </button>
+              </div>
+            ) : (
+              <span className="text-xxs font-bold text-red-400 bg-red-950/40 border border-red-900/50 px-2.5 py-1 rounded uppercase tracking-wider">
+                Read-Only View
+              </span>
+            )}
           </div>
 
           {/* Student roll list */}
@@ -350,13 +358,16 @@ export default function AttendanceMarker({ token }: AttendanceMarkerProps) {
                     {/* Present */}
                     <button
                       type="button"
-                      onClick={() => handleStatusChange(student.id, AttendanceStatus.PRESENT)}
-                      className={`p-2.5 rounded-xl border transition-all cursor-pointer ${
+                      disabled={isAdmin}
+                      onClick={() => !isAdmin && handleStatusChange(student.id, AttendanceStatus.PRESENT)}
+                      className={`p-2.5 rounded-xl border transition-all ${
+                        isAdmin ? 'cursor-not-allowed opacity-85' : 'cursor-pointer'
+                      } ${
                         currentStatus === AttendanceStatus.PRESENT
                           ? 'bg-emerald-500 text-white border-transparent shadow-md shadow-emerald-500/15'
-                          : 'bg-white text-slate-400 border-slate-200 hover:text-emerald-500 hover:bg-emerald-50/30'
+                          : 'bg-white text-slate-400 border-slate-200 ' + (!isAdmin ? 'hover:text-emerald-500 hover:bg-emerald-50/30' : '')
                       }`}
-                      title="Present"
+                      title={isAdmin ? "Present (Read-Only)" : "Present"}
                       id={`mark-present-${student.id}`}
                     >
                       <Check className="w-4 h-4" />
@@ -365,13 +376,16 @@ export default function AttendanceMarker({ token }: AttendanceMarkerProps) {
                     {/* Tardy */}
                     <button
                       type="button"
-                      onClick={() => handleStatusChange(student.id, AttendanceStatus.TARDY)}
-                      className={`p-2.5 rounded-xl border transition-all cursor-pointer ${
+                      disabled={isAdmin}
+                      onClick={() => !isAdmin && handleStatusChange(student.id, AttendanceStatus.TARDY)}
+                      className={`p-2.5 rounded-xl border transition-all ${
+                        isAdmin ? 'cursor-not-allowed opacity-85' : 'cursor-pointer'
+                      } ${
                         currentStatus === AttendanceStatus.TARDY
                           ? 'bg-blue-400 text-white border-transparent shadow-md shadow-blue-400/15'
-                          : 'bg-white text-slate-400 border-slate-200 hover:text-blue-500 hover:bg-blue-50/30'
+                          : 'bg-white text-slate-400 border-slate-200 ' + (!isAdmin ? 'hover:text-blue-500 hover:bg-blue-50/30' : '')
                       }`}
-                      title="Tardy"
+                      title={isAdmin ? "Tardy (Read-Only)" : "Tardy"}
                       id={`mark-tardy-${student.id}`}
                     >
                       <Clock className="w-4 h-4" />
@@ -380,13 +394,16 @@ export default function AttendanceMarker({ token }: AttendanceMarkerProps) {
                     {/* Absent */}
                     <button
                       type="button"
-                      onClick={() => handleStatusChange(student.id, AttendanceStatus.ABSENT)}
-                      className={`p-2.5 rounded-xl border transition-all cursor-pointer ${
+                      disabled={isAdmin}
+                      onClick={() => !isAdmin && handleStatusChange(student.id, AttendanceStatus.ABSENT)}
+                      className={`p-2.5 rounded-xl border transition-all ${
+                        isAdmin ? 'cursor-not-allowed opacity-85' : 'cursor-pointer'
+                      } ${
                         currentStatus === AttendanceStatus.ABSENT
                           ? 'bg-red-400 text-white border-transparent shadow-md shadow-red-400/15'
-                          : 'bg-white text-slate-400 border-slate-200 hover:text-red-500 hover:bg-red-50/30'
+                          : 'bg-white text-slate-400 border-slate-200 ' + (!isAdmin ? 'hover:text-red-500 hover:bg-red-50/30' : '')
                       }`}
-                      title="Absent"
+                      title={isAdmin ? "Absent (Read-Only)" : "Absent"}
                       id={`mark-absent-${student.id}`}
                     >
                       <X className="w-4 h-4" />
@@ -403,21 +420,27 @@ export default function AttendanceMarker({ token }: AttendanceMarkerProps) {
               Roster: {students.length} students loaded
             </span>
 
-            <button
-              onClick={handleSubmit}
-              disabled={saving}
-              className="px-6 py-2.5 bg-red-600 hover:bg-red-500 text-white font-bold rounded-xl text-sm flex items-center space-x-2 shadow-lg shadow-red-600/15 disabled:opacity-50 transition-all cursor-pointer"
-              id="submit-attendance-btn"
-            >
-              {saving ? (
-                <div className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin" />
-              ) : (
-                <>
-                  <Save className="w-4 h-4" />
-                  <span>Submit Attendance</span>
-                </>
-              )}
-            </button>
+            {!isAdmin ? (
+              <button
+                onClick={handleSubmit}
+                disabled={saving}
+                className="px-6 py-2.5 bg-red-600 hover:bg-red-500 text-white font-bold rounded-xl text-sm flex items-center space-x-2 shadow-lg shadow-red-600/15 disabled:opacity-50 transition-all cursor-pointer"
+                id="submit-attendance-btn"
+              >
+                {saving ? (
+                  <div className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin" />
+                ) : (
+                  <>
+                    <Save className="w-4 h-4" />
+                    <span>Submit Attendance</span>
+                  </>
+                )}
+              </button>
+            ) : (
+              <span className="text-xs text-slate-400 font-semibold italic">
+                Viewing roster records in read-only mode.
+              </span>
+            )}
           </div>
         </div>
       )}
