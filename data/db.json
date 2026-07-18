@@ -7,15 +7,6 @@
       "passwordHash": "240be518fabd2724ddb6f04eeb1da5967448d7e831c08c8fa822809f74c720a9",
       "role": "admin",
       "createdAt": "2026-01-01T00:00:00.000Z"
-    },
-    {
-      "status": "active",
-      "name": "Instructor Ken",
-      "email": "instructor@karate.com",
-      "passwordHash": "c1437a55f6e93b7049c4064af1b0920974e383a435283f5d0b0496ee4a8a47b5",
-      "role": "instructor",
-      "id": "u-1784371785313-565",
-      "createdAt": "2026-07-18T10:49:45.313Z"
     }
   ],
   "batches": [
@@ -159,6 +150,20 @@
       "action": "USER_LOGIN",
       "details": "User Instructor Ken logged in successfully.",
       "createdAt": "2026-07-18T10:52:44.387Z"
+    },
+    {
+      "id": "log-1784373761599-398",
+      "userId": "u-1",
+      "action": "DELETE_USER",
+      "details": "Deleted user account for Instructor Ken.",
+      "createdAt": "2026-07-18T11:22:41.599Z"
+    },
+    {
+      "id": "log-1784378533967-599",
+      "userId": "u-1",
+      "action": "USER_LOGIN",
+      "details": "User Admin Sensei logged in successfully.",
+      "createdAt": "2026-07-18T12:42:13.967Z"
     }
   ]
 }

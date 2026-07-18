@@ -47,9 +47,10 @@ export async function createServer() {
 }
 
 // Auto-start the server if this file is run directly (not loaded by test suite)
-const isMainModule = import.meta.url === `file://${process.argv[1]}` || 
-                     process.argv[1]?.endsWith('server.ts') || 
-                     process.argv[1]?.endsWith('server.cjs');
+const isMainModule = typeof process !== 'undefined' && (
+  process.argv[1]?.endsWith('server.ts') || 
+  process.argv[1]?.endsWith('server.cjs')
+);
 
 if (isMainModule) {
   createServer().then((app) => {

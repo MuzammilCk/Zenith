@@ -1,1 +1,94 @@
 @import "tailwindcss";
+
+@theme {
+  --color-primary: #e60012;
+  --color-signal: #f68d1f;
+  --color-amber: #ecab37;
+  --color-nav-gold: #e48600;
+  --color-canvas: #7a8aba;
+  --color-canvas-soft: #9fbee7;
+  --color-sky: #9fbee7;
+  --color-lavender: #acace7;
+  --color-ice: #c0d5e6;
+  --color-periwinkle: #8ba1d4;
+  --color-chrome-indigo: #3d4f97;
+  --color-muted-indigo: #60619c;
+  --color-platinum: #dedede;
+  --color-surface: #ffffff;
+  --color-carbon: #21242e;
+  --color-hairline: #5a5f8c;
+  --color-ink: #21242e;
+  --color-ink-soft: #3d4f97;
+  --color-on-primary: #ffffff;
+  --color-systems-teal: #206479;
+  --color-games-red: #a7282b;
+  --color-error: #e60012;
+
+  --font-sans: Arial, Helvetica, sans-serif;
+  --font-display: "Arial Black", Arial, sans-serif;
+}
+
+@layer utilities {
+  .bevel-plate {
+    background-color: var(--color-canvas);
+    border-top: 2px solid var(--color-canvas-soft);
+    border-left: 2px solid var(--color-canvas-soft);
+    border-right: 2px solid var(--color-chrome-indigo);
+    border-bottom: 2px solid var(--color-chrome-indigo);
+  }
+  
+  .bevel-plate-light {
+    background-color: var(--color-periwinkle);
+    border-top: 2px solid #a3b8ea;
+    border-left: 2px solid #a3b8ea;
+    border-right: 2px solid var(--color-chrome-indigo);
+    border-bottom: 2px solid var(--color-chrome-indigo);
+  }
+
+  .bevel-plate-platinum {
+    background-color: var(--color-platinum);
+    border-top: 2px solid #ffffff;
+    border-left: 2px solid #ffffff;
+    border-right: 2px solid #a0a0a0;
+    border-bottom: 2px solid #a0a0a0;
+  }
+
+  .bevel-inset {
+    background-color: var(--color-canvas);
+    border-top: 2px solid var(--color-chrome-indigo);
+    border-left: 2px solid var(--color-chrome-indigo);
+    border-right: 2px solid var(--color-canvas-soft);
+    border-bottom: 2px solid var(--color-canvas-soft);
+  }
+
+  .carbon-slab {
+    background-color: var(--color-carbon);
+    background-image: radial-gradient(var(--color-muted-indigo) 1px, transparent 1px);
+    background-size: 4px 4px;
+    border-top: 2px solid var(--color-hairline);
+    border-bottom: 2px solid #111;
+  }
+
+  .text-box-art {
+    color: white;
+    -webkit-text-stroke: 1.5px var(--color-carbon);
+    text-shadow: 3px 3px 0 var(--color-carbon);
+    font-family: var(--font-display);
+    font-weight: 900;
+  }
+
+  .ui-label {
+    font-family: var(--font-sans);
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+  }
+  
+  .chamfered {
+    clip-path: polygon(8px 0, 100% 0, 100% calc(100% - 8px), calc(100% - 8px) 100%, 0 100%, 0 8px);
+  }
+
+  .writing-vertical-lr {
+    writing-mode: vertical-lr;
+  }
+}

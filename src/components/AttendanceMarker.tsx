@@ -201,22 +201,24 @@ export default function AttendanceMarker({ token, userRole }: AttendanceMarkerPr
     <div className="space-y-8" id="attendance-marking-workspace">
       
       {/* Search & Selection Controls Panel */}
-      <div className="bg-white p-6 rounded-2xl border border-slate-200 shadow-sm space-y-4">
-        <h3 className="font-extrabold text-slate-900 text-base flex items-center space-x-2">
-          <Calendar className="w-5 h-5 text-red-600" />
-          <span>Class Attendance Config</span>
-        </h3>
+      <div className="bevel-plate-platinum p-4 rounded-sm space-y-4">
+        <div className="flex items-center justify-between mb-4 bg-[var(--color-canvas)] text-[var(--color-ink)] px-2 py-1 border-b border-[var(--color-chrome-indigo)]">
+          <h3 className="ui-label text-[11px] tracking-widest flex items-center space-x-2">
+            <Calendar className="w-4 h-4 text-[var(--color-ink)]" />
+            <span>≡ CLASS ATTENDANCE CONFIG</span>
+          </h3>
+        </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-4 px-2">
           {/* Batch Choice */}
           <div>
-            <label className="block text-xs font-bold text-slate-500 uppercase tracking-wider mb-2">
+            <label className="block text-xs font-bold text-[var(--color-ink-soft)] uppercase tracking-wider mb-1">
               Select Karate Class
             </label>
             <select
               value={selectedBatchId}
               onChange={(e) => setSelectedBatchId(e.target.value)}
-              className="w-full px-4 py-2.5 border border-slate-200 rounded-xl bg-white focus:outline-none focus:ring-2 focus:ring-red-600 text-sm font-semibold text-slate-700"
+              className="w-full px-3 py-1.5 border border-[var(--color-hairline)] rounded-xs bg-white focus:outline-none focus:border-[var(--color-primary)] text-xs font-bold text-[var(--color-ink)]"
               id="attendance-select-batch"
             >
               {batches.map((b) => (
@@ -229,47 +231,47 @@ export default function AttendanceMarker({ token, userRole }: AttendanceMarkerPr
 
           {/* Date Choice */}
           <div>
-            <label className="block text-xs font-bold text-slate-500 uppercase tracking-wider mb-2">
+            <label className="block text-xs font-bold text-[var(--color-ink-soft)] uppercase tracking-wider mb-1">
               Attendance Date
             </label>
             <input
               type="date"
               value={date}
               onChange={(e) => setDate(e.target.value)}
-              className="w-full px-4 py-2.5 border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-red-600 text-sm font-semibold text-slate-700 font-mono"
+              className="w-full px-3 py-1.5 border border-[var(--color-hairline)] rounded-xs bg-white focus:outline-none focus:border-[var(--color-primary)] text-xs font-bold text-[var(--color-ink)] font-mono"
               id="attendance-date"
             />
           </div>
 
           {/* Session Description */}
           <div>
-            <label className="block text-xs font-bold text-slate-500 uppercase tracking-wider mb-2">
+            <label className="block text-xs font-bold text-[var(--color-ink-soft)] uppercase tracking-wider mb-1">
               Session Type
             </label>
             <input
               type="text"
               value={session}
               onChange={(e) => setSession(e.target.value)}
-              className="w-full px-4 py-2.5 border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-red-600 text-sm font-semibold text-slate-700"
+              className="w-full px-3 py-1.5 border border-[var(--color-hairline)] rounded-xs bg-white focus:outline-none focus:border-[var(--color-primary)] text-xs font-bold text-[var(--color-ink)]"
               placeholder="e.g. Sparring practice, Kata review"
               id="attendance-session"
             />
           </div>
         </div>
 
-        <div className="pt-2 flex justify-end">
+        <div className="pt-2 flex justify-end px-2">
           <button
             onClick={handleLoadStudents}
             disabled={loadingStudents}
-            className="px-6 py-2.5 bg-slate-900 hover:bg-slate-800 text-white font-bold rounded-xl text-sm flex items-center space-x-2 transition-all shadow-md shadow-slate-900/10 cursor-pointer"
+            className="px-4 py-1.5 bg-[var(--color-signal)] hover:bg-[#ff9d38] text-white ui-label text-[11px] rounded-xs flex items-center space-x-2 transition-all shadow-[inset_0_1px_0_rgba(255,255,255,0.4)] border-b-2 border-[#b86105] cursor-pointer"
             id="load-students-btn"
           >
             {loadingStudents ? (
-              <div className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin" />
+              <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin" />
             ) : (
               <>
                 <Users className="w-4 h-4" />
-                <span>Fetch Student Rolls</span>
+                <span>FETCH STUDENT ROLLS</span>
               </>
             )}
           </button>
@@ -293,12 +295,12 @@ export default function AttendanceMarker({ token, userRole }: AttendanceMarkerPr
 
       {/* Roster Layout Sheet */}
       {students.length > 0 && (
-        <div className="bg-white rounded-2xl border border-slate-200 shadow-sm overflow-hidden" id="attendance-sheet">
+        <div className="bevel-plate-platinum p-3 rounded-sm overflow-hidden" id="attendance-sheet">
           {/* Batch description header */}
-          <div className="bg-slate-900 text-white px-6 py-4 flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-slate-800">
+          <div className="bg-[var(--color-carbon)] text-white px-4 py-2 flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-t-2 border-[var(--color-hairline)] mb-2">
             <div>
-              <h4 className="font-extrabold text-base">{selectedBatchObj?.name}</h4>
-              <p className="text-xs text-slate-400 font-medium font-mono mt-0.5">
+              <h4 className="ui-label text-base text-[var(--color-canvas-soft)]">{selectedBatchObj?.name}</h4>
+              <p className="text-[10px] text-slate-400 font-medium font-mono mt-0.5">
                 Class Schedule: {selectedBatchObj?.schedule}
               </p>
             </div>
@@ -338,14 +340,14 @@ export default function AttendanceMarker({ token, userRole }: AttendanceMarkerPr
               return (
                 <div
                   key={student.id}
-                  className="px-6 py-4 flex items-center justify-between hover:bg-slate-50/50 transition-colors"
+                  className="px-3 sm:px-6 py-4 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 hover:bg-slate-50/50 transition-colors"
                   id={`attendance-row-${student.id}`}
                 >
-                  <div className="flex items-center space-x-3 pr-4 min-w-0">
+                  <div className="flex items-center space-x-3 pr-2 min-w-0 w-full sm:w-auto">
                     <div className="w-9 h-9 rounded-lg bg-slate-100 text-slate-600 flex items-center justify-center font-bold text-xs border border-slate-200/50 flex-shrink-0">
                       {student.name.charAt(0)}
                     </div>
-                    <div className="min-w-0">
+                    <div className="min-w-0 flex-1 sm:flex-none">
                       <h5 className="font-bold text-slate-800 text-sm truncate">{student.name}</h5>
                       <span className="text-xxs font-semibold uppercase tracking-wider text-slate-400">
                         {student.currentBelt} Belt
@@ -354,7 +356,7 @@ export default function AttendanceMarker({ token, userRole }: AttendanceMarkerPr
                   </div>
 
                   {/* Marking Button Group */}
-                  <div className="flex items-center space-x-1.5 flex-shrink-0">
+                  <div className="flex items-center space-x-1.5 flex-shrink-0 self-end sm:self-auto">
                     {/* Present */}
                     <button
                       type="button"

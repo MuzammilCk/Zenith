@@ -141,44 +141,44 @@ export default function StudentForm({
   };
 
   return (
-    <div className="fixed inset-0 bg-slate-900/60 backdrop-blur-xs flex items-center justify-center p-4 z-40" id="student-form-overlay">
-      <div className="bg-white rounded-2xl w-full max-w-2xl shadow-2xl overflow-hidden flex flex-col max-h-[90vh]">
+    <div className="fixed inset-0 bg-black/60 flex items-center justify-center p-4 z-40" id="student-form-overlay">
+      <div className="bevel-plate rounded-sm w-full max-w-2xl shadow-2xl overflow-hidden flex flex-col max-h-[90vh]">
         
         {/* Header */}
-        <div className="bg-slate-900 px-6 py-4 flex items-center justify-between text-white border-b border-slate-800">
-          <h3 className="font-bold text-lg" id="student-form-title">
-            {studentToEdit ? 'Edit Student Profile' : 'Enroll New Student'}
+        <div className="bg-[var(--color-canvas)] px-4 py-3 flex items-center justify-between border-b border-[var(--color-chrome-indigo)]">
+          <h3 className="ui-label text-[12px] text-[var(--color-ink)] tracking-widest" id="student-form-title">
+            ≡ {studentToEdit ? 'EDIT STUDENT PROFILE' : 'ENROLL NEW STUDENT'}
           </h3>
           <button
             onClick={onClose}
-            className="text-slate-400 hover:text-white transition-colors cursor-pointer"
+            className="text-[var(--color-ink-soft)] hover:text-black transition-colors cursor-pointer p-1 rounded-xs hover:bg-[var(--color-canvas-soft)]"
             id="close-student-form"
           >
-            <X className="w-5 h-5" />
+            <X className="w-4 h-4" />
           </button>
         </div>
 
         {/* Form Body */}
-        <form onSubmit={handleSubmit} className="flex-1 overflow-y-auto p-6 space-y-6" id="student-form">
+        <form onSubmit={handleSubmit} className="flex-1 overflow-y-auto p-6 bg-[var(--color-platinum)] space-y-4" id="student-form">
           {formError && (
-            <div className="bg-red-50 border border-red-200 text-red-700 p-4 rounded-xl flex items-start space-x-3 text-sm" id="form-validation-error">
-              <AlertCircle className="w-5 h-5 flex-shrink-0 mt-0.5" />
+            <div className="bg-white border border-[var(--color-error)] text-[var(--color-error)] p-3 rounded-xs flex items-start space-x-2 text-[11px] font-bold" id="form-validation-error">
+              <AlertCircle className="w-4 h-4 flex-shrink-0" />
               <span>{formError}</span>
             </div>
           )}
 
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             {/* Full Name */}
             <div>
-              <label className="block text-xs font-bold text-slate-500 uppercase tracking-wider mb-2">
-                Full Name
+              <label className="block text-[10px] ui-label text-[var(--color-ink-soft)] mb-1">
+                FULL NAME
               </label>
               <input
                 type="text"
                 required
                 value={name}
                 onChange={(e) => setName(e.target.value)}
-                className="w-full px-4 py-2.5 border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-red-600 focus:border-transparent text-sm transition-all"
+                className="w-full px-2 py-1.5 border border-[var(--color-hairline)] rounded-xs bg-white focus:outline-none focus:border-[var(--color-primary)] text-xs text-[var(--color-ink)] font-bold transition-all"
                 placeholder="Miyagi Chojun"
                 id="input-student-name"
               />
@@ -186,15 +186,15 @@ export default function StudentForm({
 
             {/* Email */}
             <div>
-              <label className="block text-xs font-bold text-slate-500 uppercase tracking-wider mb-2">
-                Email Address
+              <label className="block text-[10px] ui-label text-[var(--color-ink-soft)] mb-1">
+                EMAIL ADDRESS
               </label>
               <input
                 type="email"
                 required
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
-                className="w-full px-4 py-2.5 border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-red-600 focus:border-transparent text-sm transition-all"
+                className="w-full px-2 py-1.5 border border-[var(--color-hairline)] rounded-xs bg-white focus:outline-none focus:border-[var(--color-primary)] text-xs text-[var(--color-ink)] font-mono font-bold transition-all"
                 placeholder="miyagi@dojo.com"
                 id="input-student-email"
               />
@@ -202,15 +202,15 @@ export default function StudentForm({
 
             {/* Phone */}
             <div>
-              <label className="block text-xs font-bold text-slate-500 uppercase tracking-wider mb-2">
-                Phone Number
+              <label className="block text-[10px] ui-label text-[var(--color-ink-soft)] mb-1">
+                PHONE NUMBER
               </label>
               <input
                 type="tel"
                 required
                 value={phone}
                 onChange={(e) => setPhone(e.target.value)}
-                className="w-full px-4 py-2.5 border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-red-600 focus:border-transparent text-sm transition-all"
+                className="w-full px-2 py-1.5 border border-[var(--color-hairline)] rounded-xs bg-white focus:outline-none focus:border-[var(--color-primary)] text-xs text-[var(--color-ink)] font-bold transition-all"
                 placeholder="555-0155"
                 id="input-student-phone"
               />
@@ -218,28 +218,28 @@ export default function StudentForm({
 
             {/* Date of Birth */}
             <div>
-              <label className="block text-xs font-bold text-slate-500 uppercase tracking-wider mb-2">
-                Date of Birth
+              <label className="block text-[10px] ui-label text-[var(--color-ink-soft)] mb-1">
+                DATE OF BIRTH
               </label>
               <input
                 type="date"
                 required
                 value={dateOfBirth}
                 onChange={(e) => setDateOfBirth(e.target.value)}
-                className="w-full px-4 py-2.5 border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-red-600 focus:border-transparent text-sm transition-all font-mono"
+                className="w-full px-2 py-1.5 border border-[var(--color-hairline)] rounded-xs bg-white focus:outline-none focus:border-[var(--color-primary)] text-xs text-[var(--color-ink)] font-mono font-bold transition-all"
                 id="input-student-dob"
               />
             </div>
 
             {/* Gender */}
             <div>
-              <label className="block text-xs font-bold text-slate-500 uppercase tracking-wider mb-2">
-                Gender
+              <label className="block text-[10px] ui-label text-[var(--color-ink-soft)] mb-1">
+                GENDER
               </label>
               <select
                 value={gender}
                 onChange={(e: any) => setGender(e.target.value)}
-                className="w-full px-4 py-2.5 border border-slate-200 rounded-xl bg-white focus:outline-none focus:ring-2 focus:ring-red-600 focus:border-transparent text-sm transition-all"
+                className="w-full px-2 py-1.5 border border-[var(--color-hairline)] rounded-xs bg-white focus:outline-none focus:border-[var(--color-primary)] text-xs text-[var(--color-ink)] font-bold transition-all"
                 id="input-student-gender"
               >
                 <option value="male">Male</option>
@@ -250,13 +250,13 @@ export default function StudentForm({
 
             {/* Batch Assignment */}
             <div>
-              <label className="block text-xs font-bold text-slate-500 uppercase tracking-wider mb-2">
-                Batch Class
+              <label className="block text-[10px] ui-label text-[var(--color-ink-soft)] mb-1">
+                BATCH CLASS
               </label>
               <select
                 value={batchId}
                 onChange={(e) => setBatchId(e.target.value)}
-                className="w-full px-4 py-2.5 border border-slate-200 rounded-xl bg-white focus:outline-none focus:ring-2 focus:ring-red-600 focus:border-transparent text-sm transition-all"
+                className="w-full px-2 py-1.5 border border-[var(--color-hairline)] rounded-xs bg-white focus:outline-none focus:border-[var(--color-primary)] text-xs text-[var(--color-ink)] font-bold transition-all"
                 id="input-student-batch"
               >
                 <option value="" disabled>Select a Class Batch</option>
@@ -271,13 +271,13 @@ export default function StudentForm({
             {/* Starting Belt Rank (Only on create) */}
             {!studentToEdit && (
               <div>
-                <label className="block text-xs font-bold text-slate-500 uppercase tracking-wider mb-2">
-                  Starting Belt Rank
+                <label className="block text-[10px] ui-label text-[var(--color-ink-soft)] mb-1">
+                  STARTING BELT RANK
                 </label>
                 <select
                   value={currentBelt}
                   onChange={(e: any) => setCurrentBelt(e.target.value)}
-                  className="w-full px-4 py-2.5 border border-slate-200 rounded-xl bg-white focus:outline-none focus:ring-2 focus:ring-red-600 focus:border-transparent text-sm transition-all"
+                  className="w-full px-2 py-1.5 border border-[var(--color-hairline)] rounded-xs bg-white focus:outline-none focus:border-[var(--color-primary)] text-xs text-[var(--color-ink)] font-bold transition-all"
                   id="input-student-belt"
                 >
                   {Object.values(BeltRank).map((belt) => (
@@ -291,15 +291,15 @@ export default function StudentForm({
 
             {/* Enrollment Date */}
             <div>
-              <label className="block text-xs font-bold text-slate-500 uppercase tracking-wider mb-2">
-                Joined Date
+              <label className="block text-[10px] ui-label text-[var(--color-ink-soft)] mb-1">
+                JOINED DATE
               </label>
               <input
                 type="date"
                 required
                 value={joinedDate}
                 onChange={(e) => setJoinedDate(e.target.value)}
-                className="w-full px-4 py-2.5 border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-red-600 focus:border-transparent text-sm transition-all font-mono"
+                className="w-full px-2 py-1.5 border border-[var(--color-hairline)] rounded-xs bg-white focus:outline-none focus:border-[var(--color-primary)] text-xs text-[var(--color-ink)] font-mono font-bold transition-all"
                 id="input-student-joined"
               />
             </div>
@@ -307,13 +307,13 @@ export default function StudentForm({
             {/* Active Status (Only on edit) */}
             {studentToEdit && (
               <div>
-                <label className="block text-xs font-bold text-slate-500 uppercase tracking-wider mb-2">
-                  Status
+                <label className="block text-[10px] ui-label text-[var(--color-ink-soft)] mb-1">
+                  STATUS
                 </label>
                 <select
                   value={status}
                   onChange={(e: any) => setStatus(e.target.value)}
-                  className="w-full px-4 py-2.5 border border-slate-200 rounded-xl bg-white focus:outline-none focus:ring-2 focus:ring-red-600 focus:border-transparent text-sm transition-all"
+                  className="w-full px-2 py-1.5 border border-[var(--color-hairline)] rounded-xs bg-white focus:outline-none focus:border-[var(--color-primary)] text-xs text-[var(--color-ink)] font-bold transition-all"
                   id="input-student-status"
                 >
                   <option value={StudentStatus.ACTIVE}>Active</option>
@@ -325,13 +325,13 @@ export default function StudentForm({
 
           {/* Notes */}
           <div>
-            <label className="block text-xs font-bold text-slate-500 uppercase tracking-wider mb-2">
-              Dojo Notes / Injury History
+            <label className="block text-[10px] ui-label text-[var(--color-ink-soft)] mb-1">
+              DOJO NOTES / INJURY HISTORY
             </label>
             <textarea
               value={notes}
               onChange={(e) => setNotes(e.target.value)}
-              className="w-full px-4 py-3 border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-red-600 focus:border-transparent text-sm transition-all"
+              className="w-full px-2 py-2 border border-[var(--color-hairline)] rounded-xs bg-white focus:outline-none focus:border-[var(--color-primary)] text-xs text-[var(--color-ink)] transition-all"
               placeholder="Write anything important about training progress or physical conditions here..."
               rows={3}
               id="input-student-notes"
@@ -339,27 +339,27 @@ export default function StudentForm({
           </div>
 
           {/* Footer Action Buttons */}
-          <div className="flex items-center justify-end space-x-3 pt-6 border-t border-slate-100">
+          <div className="flex items-center justify-end space-x-3 pt-4 border-t border-dotted border-[var(--color-chrome-indigo)]">
             <button
               type="button"
               onClick={onClose}
-              className="px-5 py-2.5 border border-slate-200 text-slate-500 rounded-xl text-sm font-semibold hover:bg-slate-50 transition-all cursor-pointer"
+              className="px-4 py-2 border border-[var(--color-hairline)] bg-[var(--color-carbon)] text-white ui-label rounded-xs text-[11px] transition-all cursor-pointer"
               id="cancel-student-form"
             >
-              Cancel
+              CANCEL
             </button>
             <button
               type="submit"
               disabled={submitting}
-              className="px-5 py-2.5 bg-red-600 hover:bg-red-500 text-white font-bold rounded-xl text-sm flex items-center space-x-2 shadow-lg shadow-red-600/15 disabled:opacity-50 transition-all cursor-pointer"
+              className="px-4 py-2 bg-[var(--color-signal)] text-white ui-label rounded-xs text-[11px] flex items-center space-x-2 shadow-[inset_0_1px_0_rgba(255,255,255,0.4)] border-b-2 border-[#b86105] hover:bg-[#ff9d38] disabled:opacity-50 transition-all cursor-pointer"
               id="submit-student-form"
             >
               {submitting ? (
-                <div className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin" />
+                <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin" />
               ) : (
                 <>
                   <Save className="w-4 h-4" />
-                  <span>Save Profile</span>
+                  <span>SAVE PROFILE</span>
                 </>
               )}
             </button>

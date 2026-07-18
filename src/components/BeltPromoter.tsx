@@ -91,79 +91,79 @@ export default function BeltPromoter({
   };
 
   const getBeltStyle = (b: BeltRank) => {
-    if (b === BeltRank.WHITE) return 'bg-slate-50 border border-slate-300 text-slate-700';
-    if (b === BeltRank.YELLOW) return 'bg-amber-400 text-amber-950';
-    if (b === BeltRank.ORANGE) return 'bg-orange-500 text-white';
-    if (b === BeltRank.GREEN) return 'bg-emerald-600 text-white';
-    if (b === BeltRank.BLUE) return 'bg-blue-600 text-white';
-    if (b === BeltRank.PURPLE) return 'bg-purple-600 text-white';
-    if (b === BeltRank.BROWN) return 'bg-amber-800 text-amber-100';
-    return 'bg-slate-950 text-white border border-slate-800';
+    if (b === BeltRank.WHITE) return 'bg-white border border-[var(--color-hairline)] text-[var(--color-ink)]';
+    if (b === BeltRank.YELLOW) return 'bg-[#fbbf24] text-[#451a03]';
+    if (b === BeltRank.ORANGE) return 'bg-[#f97316] text-white';
+    if (b === BeltRank.GREEN) return 'bg-[#059669] text-white';
+    if (b === BeltRank.BLUE) return 'bg-[#2563eb] text-white';
+    if (b === BeltRank.PURPLE) return 'bg-[#9333ea] text-white';
+    if (b === BeltRank.BROWN) return 'bg-[#92400e] text-[#fef3c7]';
+    return 'bg-[var(--color-carbon)] text-[var(--color-canvas)] border border-black';
   };
 
   return (
-    <div className="fixed inset-0 bg-slate-900/60 backdrop-blur-xs flex items-center justify-center p-4 z-40" id="belt-promoter-overlay">
-      <div className="bg-white rounded-2xl w-full max-w-md shadow-2xl overflow-hidden flex flex-col">
+    <div className="fixed inset-0 bg-black/60 flex items-center justify-center p-4 z-40" id="belt-promoter-overlay">
+      <div className="bevel-plate rounded-sm w-full max-w-md shadow-2xl overflow-hidden flex flex-col">
         
         {/* Header */}
-        <div className="bg-slate-900 px-6 py-4 flex items-center justify-between text-white border-b border-slate-800">
-          <h3 className="font-bold text-lg flex items-center space-x-2">
-            <Award className="w-5 h-5 text-red-600" />
-            <span>Rank Promotion Exam</span>
+        <div className="bg-[var(--color-canvas)] px-4 py-3 flex items-center justify-between border-b border-[var(--color-chrome-indigo)]">
+          <h3 className="ui-label text-[12px] text-[var(--color-ink)] tracking-widest flex items-center space-x-2">
+            <Award className="w-4 h-4 text-[var(--color-primary)]" />
+            <span>RANK PROMOTION EXAM</span>
           </h3>
           <button
             onClick={onClose}
-            className="text-slate-400 hover:text-white transition-colors cursor-pointer"
+            className="text-[var(--color-ink-soft)] hover:text-black transition-colors cursor-pointer p-1 rounded-xs hover:bg-[var(--color-canvas-soft)]"
             id="close-promoter"
           >
-            <X className="w-5 h-5" />
+            <X className="w-4 h-4" />
           </button>
         </div>
 
         {/* Content */}
-        <form onSubmit={handleSubmit} className="p-6 space-y-6" id="belt-promotion-form">
+        <form onSubmit={handleSubmit} className="p-6 bg-[var(--color-platinum)] space-y-4" id="belt-promotion-form">
           {error && (
-            <div className="bg-red-50 border border-red-200 text-red-700 p-4 rounded-xl flex items-start space-x-3 text-sm" id="promoter-error">
-              <AlertCircle className="w-5 h-5 flex-shrink-0 mt-0.5" />
+            <div className="bg-white border border-[var(--color-error)] text-[var(--color-error)] p-3 rounded-xs flex items-start space-x-2 text-[11px] font-bold" id="promoter-error">
+              <AlertCircle className="w-4 h-4 flex-shrink-0 mt-0.5" />
               <span>{error}</span>
             </div>
           )}
 
           {/* Student current rank display */}
-          <div className="bg-slate-50 p-4 rounded-xl border border-slate-200/60 text-center">
-            <h4 className="text-xs font-bold text-slate-400 uppercase tracking-widest">Promoting Student</h4>
-            <p className="text-base font-extrabold text-slate-800 mt-1">{student.name}</p>
+          <div className="bg-[var(--color-canvas-soft)] p-3 rounded-xs border border-[var(--color-hairline)] text-center">
+            <h4 className="text-[10px] ui-label text-[var(--color-ink-soft)]">PROMOTING STUDENT</h4>
+            <p className="text-xs font-bold text-[var(--color-ink)] mt-1">{student.name}</p>
             
-            <div className="flex items-center justify-center space-x-4 mt-3">
-              <span className={`px-3 py-1.5 rounded-lg text-xs font-bold uppercase tracking-wider ${getBeltStyle(student.currentBelt)}`}>
+            <div className="flex items-center justify-center space-x-3 mt-2">
+              <span className={`px-2 py-0.5 rounded-xs text-[10px] ui-label ${getBeltStyle(student.currentBelt)}`}>
                 {student.currentBelt}
               </span>
-              <ArrowRight className="w-4 h-4 text-slate-400" />
+              <ArrowRight className="w-3 h-3 text-[var(--color-ink-soft)]" />
               {eligibleBelts.length > 0 ? (
-                <span className={`px-3 py-1.5 rounded-lg text-xs font-bold uppercase tracking-wider ${getBeltStyle(newBelt)}`}>
+                <span className={`px-2 py-0.5 rounded-xs text-[10px] ui-label ${getBeltStyle(newBelt)}`}>
                   {newBelt}
                 </span>
               ) : (
-                <span className="text-xs font-bold text-slate-400 italic">Max Rank Reached</span>
+                <span className="text-[10px] ui-label text-[var(--color-ink-soft)] italic">MAX RANK REACHED</span>
               )}
             </div>
           </div>
 
           {eligibleBelts.length === 0 ? (
-            <div className="text-center py-4 text-sm font-semibold text-slate-500">
+            <div className="text-center py-4 text-xs font-bold text-[var(--color-ink-soft)]">
               🎓 This student has already achieved the highest rank (**Black Belt**). No further promotions are possible.
             </div>
           ) : (
             <div className="space-y-4">
               {/* New Belt Selection */}
               <div>
-                <label className="block text-xs font-bold text-slate-500 uppercase tracking-wider mb-2">
-                  Target Belt Rank
+                <label className="block text-[10px] ui-label text-[var(--color-ink-soft)] mb-1">
+                  TARGET BELT RANK
                 </label>
                 <select
                   value={newBelt}
                   onChange={(e: any) => setNewBelt(e.target.value)}
-                  className="w-full px-4 py-2.5 border border-slate-200 rounded-xl bg-white focus:outline-none focus:ring-2 focus:ring-red-600 focus:border-transparent text-sm transition-all"
+                  className="w-full px-2 py-1.5 border border-[var(--color-hairline)] rounded-xs bg-white focus:outline-none focus:border-[var(--color-primary)] text-xs text-[var(--color-ink)] font-bold transition-all"
                   id="select-new-belt"
                 >
                   {eligibleBelts.map((belt) => (
@@ -176,28 +176,28 @@ export default function BeltPromoter({
 
               {/* Date */}
               <div>
-                <label className="block text-xs font-bold text-slate-500 uppercase tracking-wider mb-2">
-                  Promotion Date
+                <label className="block text-[10px] ui-label text-[var(--color-ink-soft)] mb-1">
+                  PROMOTION DATE
                 </label>
                 <input
                   type="date"
                   required
                   value={date}
                   onChange={(e) => setDate(e.target.value)}
-                  className="w-full px-4 py-2.5 border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-red-600 focus:border-transparent text-sm transition-all font-mono"
+                  className="w-full px-2 py-1.5 border border-[var(--color-hairline)] rounded-xs bg-white focus:outline-none focus:border-[var(--color-primary)] text-xs text-[var(--color-ink)] font-mono font-bold transition-all"
                   id="promoter-date"
                 />
               </div>
 
               {/* Notes */}
               <div>
-                <label className="block text-xs font-bold text-slate-500 uppercase tracking-wider mb-2">
-                  Examiner's Grading Notes
+                <label className="block text-[10px] ui-label text-[var(--color-ink-soft)] mb-1">
+                  EXAMINER'S GRADING NOTES
                 </label>
                 <textarea
                   value={notes}
                   onChange={(e) => setNotes(e.target.value)}
-                  className="w-full px-4 py-3 border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-red-600 focus:border-transparent text-sm transition-all"
+                  className="w-full px-2 py-2 border border-[var(--color-hairline)] rounded-xs bg-white focus:outline-none focus:border-[var(--color-primary)] text-xs text-[var(--color-ink)] transition-all"
                   placeholder="e.g. Demonstrated outstanding kata form and strong spirit during sparring..."
                   rows={3}
                   id="promoter-notes"
@@ -207,28 +207,28 @@ export default function BeltPromoter({
           )}
 
           {/* Action buttons */}
-          <div className="flex items-center justify-end space-x-3 pt-4 border-t border-slate-100">
+          <div className="flex items-center justify-end space-x-3 pt-4 border-t border-dotted border-[var(--color-chrome-indigo)]">
             <button
               type="button"
               onClick={onClose}
-              className="px-4 py-2 border border-slate-200 text-slate-500 rounded-xl text-sm font-semibold hover:bg-slate-50 transition-all cursor-pointer"
+              className="px-4 py-2 border border-[var(--color-hairline)] bg-[var(--color-carbon)] text-white ui-label rounded-xs text-[11px] transition-all cursor-pointer"
               id="cancel-promotion-btn"
             >
-              Close
+              CLOSE
             </button>
             {eligibleBelts.length > 0 && (
               <button
                 type="submit"
                 disabled={submitting}
-                className="px-5 py-2 bg-red-600 hover:bg-red-500 text-white font-bold rounded-xl text-sm flex items-center space-x-2 shadow-lg shadow-red-600/15 disabled:opacity-50 transition-all cursor-pointer"
+                className="px-4 py-2 bg-[var(--color-signal)] text-white ui-label rounded-xs text-[11px] flex items-center space-x-2 shadow-[inset_0_1px_0_rgba(255,255,255,0.4)] border-b-2 border-[#b86105] hover:bg-[#ff9d38] disabled:opacity-50 transition-all cursor-pointer"
                 id="submit-promotion-btn"
               >
                 {submitting ? (
-                  <div className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin" />
+                  <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin" />
                 ) : (
                   <>
                     <Award className="w-4 h-4" />
-                    <span>Confirm Upgrade</span>
+                    <span>CONFIRM UPGRADE</span>
                   </>
                 )}
               </button>

@@ -147,14 +147,14 @@ export default function StudentList({
   };
 
   const getBeltStyle = (b: BeltRank) => {
-    if (b === BeltRank.WHITE) return 'bg-slate-50 border border-slate-300 text-slate-700';
-    if (b === BeltRank.YELLOW) return 'bg-amber-100 text-amber-800 border border-amber-300';
-    if (b === BeltRank.ORANGE) return 'bg-orange-100 text-orange-800 border border-orange-300';
-    if (b === BeltRank.GREEN) return 'bg-emerald-100 text-emerald-800 border border-emerald-300';
-    if (b === BeltRank.BLUE) return 'bg-blue-100 text-blue-800 border border-blue-300';
-    if (b === BeltRank.PURPLE) return 'bg-purple-100 text-purple-800 border border-purple-300';
-    if (b === BeltRank.BROWN) return 'bg-amber-950 text-amber-200 border border-amber-900';
-    return 'bg-slate-950 text-white border border-slate-900';
+    if (b === BeltRank.WHITE) return 'bg-white border border-[var(--color-hairline)] text-[var(--color-ink)]';
+    if (b === BeltRank.YELLOW) return 'bg-[#fbbf24] text-[#451a03]';
+    if (b === BeltRank.ORANGE) return 'bg-[#f97316] text-white';
+    if (b === BeltRank.GREEN) return 'bg-[#059669] text-white';
+    if (b === BeltRank.BLUE) return 'bg-[#2563eb] text-white';
+    if (b === BeltRank.PURPLE) return 'bg-[#9333ea] text-white';
+    if (b === BeltRank.BROWN) return 'bg-[#92400e] text-[#fef3c7]';
+    return 'bg-[var(--color-carbon)] text-[var(--color-canvas)] border border-black';
   };
 
   return (
@@ -174,7 +174,7 @@ export default function StudentList({
               setSearch(e.target.value);
               setPage(1);
             }}
-            className="w-full pl-10 pr-4 py-2.5 border border-slate-200 bg-white rounded-xl focus:outline-none focus:ring-2 focus:ring-red-600 focus:border-transparent text-sm transition-all shadow-xs"
+            className="w-full pl-10 pr-4 py-1.5 border border-[var(--color-hairline)] bg-white rounded-xs focus:outline-none focus:border-[var(--color-primary)] text-xs text-[var(--color-ink)]"
             placeholder="Search students by name, email, or phone..."
             id="search-input"
           />
@@ -186,26 +186,26 @@ export default function StudentList({
             setStudentToEdit(null);
             setIsFormOpen(true);
           }}
-          className="px-5 py-2.5 bg-red-600 hover:bg-red-500 text-white font-bold rounded-xl text-sm flex items-center justify-center space-x-2 shadow-lg shadow-red-600/15 transition-all cursor-pointer"
+          className="px-4 py-1.5 bg-[var(--color-amber)] text-[var(--color-carbon)] ui-label text-[11px] rounded-xs flex items-center justify-center space-x-2 border-b border-[#a87a27] cursor-pointer"
           id="enroll-student-btn"
         >
-          <Plus className="w-5 h-5" />
-          <span>Enroll Student</span>
+          <Plus className="w-4 h-4" />
+          <span>ENROLL STUDENT</span>
         </button>
       </div>
 
       {/* Filter Row */}
-      <div className="bg-white p-4 rounded-2xl border border-slate-200 shadow-xs grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-4">
+      <div className="bevel-plate-platinum p-3 rounded-sm grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-3">
         {/* Class Filter */}
-        <div className="space-y-1.5">
-          <label className="block text-xxs font-bold text-slate-400 uppercase tracking-wider">Class Batch</label>
+        <div className="space-y-1">
+          <label className="block text-[10px] ui-label text-[var(--color-ink-soft)] mb-0.5">CLASS BATCH</label>
           <select
             value={selectedBatch}
             onChange={(e) => {
               setSelectedBatch(e.target.value);
               setPage(1);
             }}
-            className="w-full text-xs px-3 py-2 border border-slate-200 rounded-lg bg-slate-50 focus:outline-none focus:ring-1 focus:ring-red-600 text-slate-600 font-medium"
+            className="w-full text-xs px-2 py-1.5 border border-[var(--color-hairline)] rounded-xs bg-white focus:outline-none focus:border-[var(--color-primary)] text-[var(--color-ink)] font-bold transition-all"
             id="filter-batch"
           >
             <option value="">All Batches</option>
@@ -218,15 +218,15 @@ export default function StudentList({
         </div>
 
         {/* Belt Rank Filter */}
-        <div className="space-y-1.5">
-          <label className="block text-xxs font-bold text-slate-400 uppercase tracking-wider">Belt Rank</label>
+        <div className="space-y-1">
+          <label className="block text-[10px] ui-label text-[var(--color-ink-soft)] mb-0.5">BELT RANK</label>
           <select
             value={selectedBelt}
             onChange={(e) => {
               setSelectedBelt(e.target.value);
               setPage(1);
             }}
-            className="w-full text-xs px-3 py-2 border border-slate-200 rounded-lg bg-slate-50 focus:outline-none focus:ring-1 focus:ring-red-600 text-slate-600 font-medium"
+            className="w-full text-xs px-2 py-1.5 border border-[var(--color-hairline)] rounded-xs bg-white focus:outline-none focus:border-[var(--color-primary)] text-[var(--color-ink)] font-bold transition-all"
             id="filter-belt"
           >
             <option value="">All Belt Ranks</option>
@@ -239,15 +239,15 @@ export default function StudentList({
         </div>
 
         {/* Status Filter */}
-        <div className="space-y-1.5">
-          <label className="block text-xxs font-bold text-slate-400 uppercase tracking-wider">Active Status</label>
+        <div className="space-y-1">
+          <label className="block text-[10px] ui-label text-[var(--color-ink-soft)] mb-0.5">ACTIVE STATUS</label>
           <select
             value={selectedStatus}
             onChange={(e) => {
               setSelectedStatus(e.target.value);
               setPage(1);
             }}
-            className="w-full text-xs px-3 py-2 border border-slate-200 rounded-lg bg-slate-50 focus:outline-none focus:ring-1 focus:ring-red-600 text-slate-600 font-medium"
+            className="w-full text-xs px-2 py-1.5 border border-[var(--color-hairline)] rounded-xs bg-white focus:outline-none focus:border-[var(--color-primary)] text-[var(--color-ink)] font-bold transition-all"
             id="filter-status"
           >
             <option value="">All Statuses</option>
@@ -257,12 +257,12 @@ export default function StudentList({
         </div>
 
         {/* Sort Field */}
-        <div className="space-y-1.5">
-          <label className="block text-xxs font-bold text-slate-400 uppercase tracking-wider">Sort By</label>
+        <div className="space-y-1">
+          <label className="block text-[10px] ui-label text-[var(--color-ink-soft)] mb-0.5">SORT BY</label>
           <select
             value={sortBy}
             onChange={(e) => setSortBy(e.target.value)}
-            className="w-full text-xs px-3 py-2 border border-slate-200 rounded-lg bg-slate-50 focus:outline-none focus:ring-1 focus:ring-red-600 text-slate-600 font-medium"
+            className="w-full text-xs px-2 py-1.5 border border-[var(--color-hairline)] rounded-xs bg-white focus:outline-none focus:border-[var(--color-primary)] text-[var(--color-ink)] font-bold transition-all"
             id="sort-by-field"
           >
             <option value="name">Student Name</option>
@@ -273,12 +273,12 @@ export default function StudentList({
         </div>
 
         {/* Sort Order */}
-        <div className="space-y-1.5">
-          <label className="block text-xxs font-bold text-slate-400 uppercase tracking-wider">Sort Order</label>
+        <div className="space-y-1">
+          <label className="block text-[10px] ui-label text-[var(--color-ink-soft)] mb-0.5">SORT ORDER</label>
           <select
             value={order}
             onChange={(e) => setOrder(e.target.value)}
-            className="w-full text-xs px-3 py-2 border border-slate-200 rounded-lg bg-slate-50 focus:outline-none focus:ring-1 focus:ring-red-600 text-slate-600 font-medium"
+            className="w-full text-xs px-2 py-1.5 border border-[var(--color-hairline)] rounded-xs bg-white focus:outline-none focus:border-[var(--color-primary)] text-[var(--color-ink)] font-bold transition-all"
             id="sort-order"
           >
             <option value="asc">Ascending (A-Z)</option>
@@ -289,50 +289,50 @@ export default function StudentList({
 
       {/* Directory Grid/Table */}
       {loading ? (
-        <div className="flex flex-col items-center justify-center py-20 space-y-4" id="list-loading">
-          <div className="w-10 h-10 border-4 border-red-600 border-t-transparent rounded-full animate-spin" />
-          <p className="text-slate-400 text-sm font-semibold">Scanning enrollment rolls...</p>
+        <div className="flex flex-col items-center justify-center py-20 space-y-4 bevel-plate-platinum rounded-sm" id="list-loading">
+          <div className="w-10 h-10 border-4 border-[var(--color-primary)] border-t-transparent rounded-full animate-spin" />
+          <p className="ui-label text-[11px] text-[var(--color-ink)]">Scanning enrollment rolls...</p>
         </div>
       ) : error ? (
-        <div className="bg-red-50 border border-red-200 text-red-700 p-6 rounded-xl text-center" id="list-error">
-          <p className="font-semibold">{error}</p>
+        <div className="bevel-plate-platinum border border-[var(--color-error)] text-[var(--color-error)] p-6 rounded-sm text-center" id="list-error">
+          <p className="font-bold text-xs">{error}</p>
         </div>
       ) : students.length === 0 ? (
-        <div className="bg-white py-16 px-4 rounded-2xl border border-slate-200 text-center space-y-3" id="list-empty">
-          <HelpCircle className="w-12 h-12 text-slate-300 mx-auto" />
-          <h4 className="font-extrabold text-slate-700 text-base">No Students Found</h4>
-          <p className="text-xs text-slate-400 max-w-sm mx-auto">
+        <div className="bevel-plate-platinum py-16 px-4 rounded-sm text-center space-y-3" id="list-empty">
+          <HelpCircle className="w-12 h-12 text-[var(--color-chrome-indigo)] mx-auto opacity-50" />
+          <h4 className="font-extrabold text-[var(--color-ink)] text-xs">No Students Found</h4>
+          <p className="text-[11px] text-[var(--color-ink-soft)] max-w-sm mx-auto">
             We couldn't find any students matching your filters. Try clearing your search queries or resetting filters.
           </p>
         </div>
       ) : (
-        <div className="bg-white rounded-2xl border border-slate-200 shadow-xs overflow-hidden" id="student-table-container">
-          <div className="overflow-x-auto">
-            <table className="w-full text-left text-sm whitespace-nowrap">
+        <div className="bevel-plate-platinum p-1 rounded-sm overflow-hidden" id="student-table-container">
+          <div className="overflow-x-auto bg-[var(--color-platinum)] bevel-inset">
+            <table className="w-full text-left text-xs whitespace-nowrap">
               <thead>
-                <tr className="bg-slate-50 border-b border-slate-200/60 text-slate-400 text-xxs font-bold uppercase tracking-wider">
-                  <th className="px-6 py-4">Student</th>
-                  <th className="px-6 py-4">Belt Rank</th>
-                  <th className="px-6 py-4">Batch Class</th>
-                  <th className="px-6 py-4">Status</th>
-                  <th className="px-6 py-4">Phone</th>
-                  <th className="px-6 py-4 text-right">Actions</th>
+                <tr className="bg-[var(--color-canvas-soft)] border-b border-[var(--color-hairline)] text-[var(--color-ink-soft)] ui-label text-[10px]">
+                  <th className="px-4 py-2 border-r border-[var(--color-hairline)]">STUDENT</th>
+                  <th className="px-4 py-2 border-r border-[var(--color-hairline)]">BELT RANK</th>
+                  <th className="px-4 py-2 border-r border-[var(--color-hairline)]">BATCH CLASS</th>
+                  <th className="px-4 py-2 border-r border-[var(--color-hairline)]">STATUS</th>
+                  <th className="px-4 py-2 border-r border-[var(--color-hairline)]">PHONE</th>
+                  <th className="px-4 py-2 text-right">ACTIONS</th>
                 </tr>
               </thead>
-              <tbody className="divide-y divide-slate-100 text-slate-700">
+              <tbody className="divide-y divide-[var(--color-hairline)] text-[var(--color-ink)]">
                 {students.map((student) => (
-                  <tr key={student.id} className="hover:bg-slate-50/40 transition-colors group" id={`student-row-${student.id}`}>
+                  <tr key={student.id} className="hover:bg-white/40 transition-colors group" id={`student-row-${student.id}`}>
                     {/* Name + Email */}
-                    <td className="px-6 py-4">
+                    <td className="px-4 py-3 border-r border-[var(--color-hairline)]">
                       <div className="flex items-center space-x-3">
-                        <div className="w-10 h-10 rounded-xl bg-slate-100 text-slate-700 flex items-center justify-center font-extrabold text-sm border border-slate-200/50">
+                        <div className="w-8 h-8 rounded-xs bg-[var(--color-canvas)] text-[var(--color-ink)] flex items-center justify-center font-display font-black text-xs border border-[var(--color-chrome-indigo)] shadow-sm">
                           {student.name.charAt(0)}
                         </div>
                         <div>
-                          <h5 className="font-bold text-slate-900 text-sm leading-tight group-hover:text-red-600 transition-colors">
+                          <h5 className="font-bold text-[var(--color-ink)] text-xs leading-tight group-hover:text-[var(--color-primary)] transition-colors">
                             {student.name}
                           </h5>
-                          <span className="text-xs text-slate-400 font-medium truncate max-w-[180px] block mt-0.5">
+                          <span className="text-[10px] font-mono text-[var(--color-ink-soft)] font-bold truncate max-w-[180px] block mt-0.5">
                             {student.email}
                           </span>
                         </div>
@@ -340,39 +340,39 @@ export default function StudentList({
                     </td>
 
                     {/* Belt Rank */}
-                    <td className="px-6 py-4">
-                      <span className={`inline-flex px-2.5 py-1 rounded-lg text-xxs font-extrabold uppercase tracking-wider ${getBeltStyle(student.currentBelt)}`}>
+                    <td className="px-4 py-3 border-r border-[var(--color-hairline)]">
+                      <span className={`inline-flex px-2 py-0.5 rounded-xs text-[10px] ui-label ${getBeltStyle(student.currentBelt)}`}>
                         {student.currentBelt}
                       </span>
                     </td>
 
                     {/* Batch Name */}
-                    <td className="px-6 py-4 text-slate-600 font-medium text-xs">
+                    <td className="px-4 py-3 text-[var(--color-ink)] font-bold text-xs border-r border-[var(--color-hairline)]">
                       {student.batchName}
                     </td>
 
                     {/* Status */}
-                    <td className="px-6 py-4">
-                      <span className={`inline-flex px-2 py-0.5 rounded text-xxs font-extrabold uppercase tracking-wider ${
+                    <td className="px-4 py-3 border-r border-[var(--color-hairline)]">
+                      <span className={`inline-flex px-2 py-0.5 rounded-xs text-[10px] ui-label ${
                         student.status === StudentStatus.ACTIVE
-                          ? 'bg-emerald-50 text-emerald-700 border border-emerald-200/60'
-                          : 'bg-slate-100 text-slate-500 border border-slate-200'
+                          ? 'bg-[#4ade80] text-[var(--color-carbon)] border border-[#15803d]'
+                          : 'bg-[var(--color-canvas)] text-[var(--color-ink-soft)] border border-[var(--color-chrome-indigo)]'
                       }`}>
                         {student.status}
                       </span>
                     </td>
 
                     {/* Phone */}
-                    <td className="px-6 py-4 text-xs font-mono text-slate-500 font-semibold">
+                    <td className="px-4 py-3 text-xs font-mono text-[var(--color-ink)] font-bold border-r border-[var(--color-hairline)]">
                       {student.phone}
                     </td>
 
                     {/* Actions */}
-                    <td className="px-6 py-4 text-right space-x-1.5">
+                    <td className="px-4 py-3 text-right space-x-1.5">
                       {/* View details */}
                       <button
                         onClick={() => onViewStudent(student.id)}
-                        className="p-1.5 text-slate-400 hover:text-slate-900 hover:bg-slate-100 rounded-lg transition-all cursor-pointer"
+                        className="p-1 text-[var(--color-ink-soft)] hover:text-black hover:bg-[var(--color-canvas-soft)] rounded-xs transition-all cursor-pointer border border-transparent hover:border-[var(--color-hairline)]"
                         title="View Profile Details"
                         id={`btn-view-${student.id}`}
                       >
@@ -385,7 +385,7 @@ export default function StudentList({
                           setStudentToEdit(student);
                           setIsFormOpen(true);
                         }}
-                        className="p-1.5 text-slate-400 hover:text-blue-600 hover:bg-blue-50 rounded-lg transition-all cursor-pointer"
+                        className="p-1 text-[var(--color-ink-soft)] hover:text-[#2563eb] hover:bg-[#eff6ff] rounded-xs transition-all cursor-pointer border border-transparent hover:border-[#bfdbfe]"
                         title="Edit Profile"
                         id={`btn-edit-${student.id}`}
                       >
@@ -396,7 +396,7 @@ export default function StudentList({
                       {userRole === UserRole.ADMIN && (
                         <button
                           onClick={() => setStudentToPromote(student)}
-                          className="p-1.5 text-slate-400 hover:text-amber-600 hover:bg-amber-50 rounded-lg transition-all cursor-pointer"
+                          className="p-1 text-[var(--color-ink-soft)] hover:text-[#f97316] hover:bg-[#fff7ed] rounded-xs transition-all cursor-pointer border border-transparent hover:border-[#fed7aa]"
                           title="Promote Belt Rank"
                           id={`btn-promote-${student.id}`}
                         >
@@ -408,7 +408,7 @@ export default function StudentList({
                       {userRole === UserRole.ADMIN && (
                         <button
                           onClick={() => handleDelete(student)}
-                          className="p-1.5 text-slate-400 hover:text-red-600 hover:bg-red-50 rounded-lg transition-all cursor-pointer"
+                          className="p-1 text-[var(--color-ink-soft)] hover:text-[var(--color-error)] hover:bg-[#fef2f2] rounded-xs transition-all cursor-pointer border border-transparent hover:border-[#fecaca]"
                           title="Delete Record"
                           id={`btn-delete-${student.id}`}
                         >
@@ -424,27 +424,27 @@ export default function StudentList({
 
           {/* Pagination Controls */}
           {totalPages > 1 && (
-            <div className="px-6 py-4 bg-slate-50 border-t border-slate-100 flex items-center justify-between" id="pagination-controls">
-              <span className="text-xs text-slate-400 font-mono font-bold">
-                Showing {(page - 1) * 8 + 1} - {Math.min(page * 8, totalRecords)} of {totalRecords} Records
+            <div className="px-4 py-3 bg-[var(--color-platinum)] border-t border-[var(--color-hairline)] flex items-center justify-between" id="pagination-controls">
+              <span className="text-[10px] text-[var(--color-ink-soft)] font-mono font-bold">
+                SHOWING {(page - 1) * 8 + 1} - {Math.min(page * 8, totalRecords)} OF {totalRecords} RECORDS
               </span>
 
               <div className="flex items-center space-x-2">
                 <button
                   disabled={page === 1}
                   onClick={() => setPage(page - 1)}
-                  className="p-1 border border-slate-200 bg-white hover:bg-slate-100 rounded-lg text-slate-500 disabled:opacity-40 transition-all cursor-pointer"
+                  className="p-1 border border-[var(--color-hairline)] bg-white hover:bg-[var(--color-canvas)] rounded-xs text-[var(--color-ink)] disabled:opacity-40 transition-all cursor-pointer"
                   id="prev-page-btn"
                 >
                   <ChevronLeft className="w-4 h-4" />
                 </button>
-                <span className="text-xs font-bold text-slate-700 font-mono px-3">
+                <span className="text-[11px] font-bold text-[var(--color-ink)] font-mono px-3">
                   {page} / {totalPages}
                 </span>
                 <button
                   disabled={page === totalPages}
                   onClick={() => setPage(page + 1)}
-                  className="p-1 border border-slate-200 bg-white hover:bg-slate-100 rounded-lg text-slate-500 disabled:opacity-40 transition-all cursor-pointer"
+                  className="p-1 border border-[var(--color-hairline)] bg-white hover:bg-[var(--color-canvas)] rounded-xs text-[var(--color-ink)] disabled:opacity-40 transition-all cursor-pointer"
                   id="next-page-btn"
                 >
                   <ChevronRight className="w-4 h-4" />
