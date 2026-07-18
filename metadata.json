@@ -1,0 +1,6 @@
+{
+  "name": "Karate Institution Management System",
+  "description": "A modern web application for managing students, marking attendance, updating belt ranks, and viewing dashboards for a karate institution.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
