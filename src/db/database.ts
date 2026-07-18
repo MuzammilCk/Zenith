@@ -43,14 +43,6 @@ const DEFAULT_USERS: User[] = [
     role: UserRole.ADMIN,
     createdAt: new Date('2026-01-01').toISOString(),
   },
-  {
-    id: 'u-2',
-    name: 'Instructor Ken',
-    email: 'instructor@karate.com',
-    passwordHash: hashPassword('instructor123'),
-    role: UserRole.INSTRUCTOR,
-    createdAt: new Date('2026-01-02').toISOString(),
-  },
 ];
 
 const DEFAULT_BATCHES: Batch[] = [
@@ -80,178 +72,11 @@ const DEFAULT_BATCHES: Batch[] = [
   },
 ];
 
-const DEFAULT_STUDENTS: Student[] = [
-  {
-    id: 's-1',
-    name: 'John Doe',
-    email: 'john.doe@gmail.com',
-    phone: '555-0101',
-    dateOfBirth: '2015-05-12',
-    gender: 'male',
-    currentBelt: BeltRank.WHITE,
-    status: StudentStatus.ACTIVE,
-    batchId: 'b-1',
-    joinedDate: '2026-02-10',
-    notes: 'Very enthusiastic, needs to focus on stance.',
-    createdAt: new Date('2026-02-10').toISOString(),
-  },
-  {
-    id: 's-2',
-    name: 'Jane Smith',
-    email: 'jane.smith@yahoo.com',
-    phone: '555-0102',
-    dateOfBirth: '2014-08-23',
-    gender: 'female',
-    currentBelt: BeltRank.YELLOW,
-    status: StudentStatus.ACTIVE,
-    batchId: 'b-1',
-    joinedDate: '2026-01-15',
-    notes: 'Excellent flexibility, preparing for Orange belt.',
-    createdAt: new Date('2026-01-15').toISOString(),
-  },
-  {
-    id: 's-3',
-    name: 'Michael Chen',
-    email: 'mchen@gmail.com',
-    phone: '555-0103',
-    dateOfBirth: '2008-11-04',
-    gender: 'male',
-    currentBelt: BeltRank.GREEN,
-    status: StudentStatus.ACTIVE,
-    batchId: 'b-2',
-    joinedDate: '2026-01-10',
-    notes: 'Strong side kicks. Dedicated student.',
-    createdAt: new Date('2026-01-10').toISOString(),
-  },
-  {
-    id: 's-4',
-    name: 'Sarah Connor',
-    email: 'sconnor@skynet.com',
-    phone: '555-0199',
-    dateOfBirth: '1985-11-10',
-    gender: 'female',
-    currentBelt: BeltRank.BROWN,
-    status: StudentStatus.ACTIVE,
-    batchId: 'b-3',
-    joinedDate: '2026-01-05',
-    notes: 'Outstanding intensity, perfect form.',
-    createdAt: new Date('2026-01-05').toISOString(),
-  },
-  {
-    id: 's-5',
-    name: 'David Miller',
-    email: 'dmiller@outlook.com',
-    phone: '555-0144',
-    dateOfBirth: '1990-04-18',
-    gender: 'male',
-    currentBelt: BeltRank.BLACK,
-    status: StudentStatus.ACTIVE,
-    batchId: 'b-3',
-    joinedDate: '2026-01-01',
-    notes: 'Assistant instructor material.',
-    createdAt: new Date('2026-01-01').toISOString(),
-  },
-  {
-    id: 's-6',
-    name: 'Alex Rivera',
-    email: 'arivera@gmail.com',
-    phone: '555-0177',
-    dateOfBirth: '2010-02-15',
-    gender: 'other',
-    currentBelt: BeltRank.BLUE,
-    status: StudentStatus.INACTIVE,
-    batchId: 'b-2',
-    joinedDate: '2026-03-01',
-    notes: 'On temporary leave due to school sports.',
-    createdAt: new Date('2026-03-01').toISOString(),
-  },
-];
+const DEFAULT_STUDENTS: Student[] = [];
 
-const DEFAULT_BELT_HISTORY: BeltHistory[] = [
-  {
-    id: 'h-1',
-    studentId: 's-2',
-    oldBelt: BeltRank.WHITE,
-    newBelt: BeltRank.YELLOW,
-    promotedBy: 'Admin Sensei',
-    date: '2026-03-15',
-    notes: 'Passed promotional test with high score in kata.',
-    createdAt: new Date('2026-03-15').toISOString(),
-  },
-  {
-    id: 'h-2',
-    studentId: 's-3',
-    oldBelt: BeltRank.ORANGE,
-    newBelt: BeltRank.GREEN,
-    promotedBy: 'Admin Sensei',
-    date: '2026-04-10',
-    notes: 'Excellent sparring performance.',
-    createdAt: new Date('2026-04-10').toISOString(),
-  },
-  {
-    id: 'h-3',
-    studentId: 's-4',
-    oldBelt: BeltRank.BLUE,
-    newBelt: BeltRank.BROWN,
-    promotedBy: 'Admin Sensei',
-    date: '2026-05-01',
-    notes: 'Demonstrated deep understanding of advanced kata.',
-    createdAt: new Date('2026-05-01').toISOString(),
-  },
-];
+const DEFAULT_BELT_HISTORY: BeltHistory[] = [];
 
-const DEFAULT_ATTENDANCE: AttendanceRecord[] = [
-  {
-    id: 'a-1',
-    studentId: 's-1',
-    batchId: 'b-1',
-    date: '2026-07-15',
-    session: 'Regular Class',
-    status: 'present' as any,
-    markedBy: 'u-2',
-    createdAt: new Date('2026-07-15T16:05:00Z').toISOString(),
-  },
-  {
-    id: 'a-2',
-    studentId: 's-2',
-    batchId: 'b-1',
-    date: '2026-07-15',
-    session: 'Regular Class',
-    status: 'present' as any,
-    markedBy: 'u-2',
-    createdAt: new Date('2026-07-15T16:05:00Z').toISOString(),
-  },
-  {
-    id: 'a-3',
-    studentId: 's-3',
-    batchId: 'b-2',
-    date: '2026-07-15',
-    session: 'Advanced Sparring',
-    status: 'tardy' as any,
-    markedBy: 'u-2',
-    createdAt: new Date('2026-07-15T17:20:00Z').toISOString(),
-  },
-  {
-    id: 'a-4',
-    studentId: 's-4',
-    batchId: 'b-3',
-    date: '2026-07-16',
-    session: 'Adults Open Class',
-    status: 'present' as any,
-    markedBy: 'u-1',
-    createdAt: new Date('2026-07-16T19:15:00Z').toISOString(),
-  },
-  {
-    id: 'a-5',
-    studentId: 's-5',
-    batchId: 'b-3',
-    date: '2026-07-16',
-    session: 'Adults Open Class',
-    status: 'absent' as any,
-    markedBy: 'u-1',
-    createdAt: new Date('2026-07-16T19:15:00Z').toISOString(),
-  },
-];
+const DEFAULT_ATTENDANCE: AttendanceRecord[] = [];
 
 export class RelationalDB {
   private schema: DatabaseSchema;
@@ -277,6 +102,30 @@ export class RelationalDB {
       if (fs.existsSync(DB_FILE)) {
         const fileContent = fs.readFileSync(DB_FILE, 'utf-8');
         this.schema = JSON.parse(fileContent);
+        let modified = false;
+        if (!this.schema.users || this.schema.users.length === 0) {
+          this.schema.users = DEFAULT_USERS;
+          modified = true;
+        }
+        if (!this.schema.batches || this.schema.batches.length === 0) {
+          this.schema.batches = DEFAULT_BATCHES;
+          modified = true;
+        }
+        if (!this.schema.students || this.schema.students.length === 0) {
+          this.schema.students = DEFAULT_STUDENTS;
+          modified = true;
+        }
+        if (!this.schema.belt_history || this.schema.belt_history.length === 0) {
+          this.schema.belt_history = DEFAULT_BELT_HISTORY;
+          modified = true;
+        }
+        if (!this.schema.attendance_records || this.schema.attendance_records.length === 0) {
+          this.schema.attendance_records = DEFAULT_ATTENDANCE;
+          modified = true;
+        }
+        if (modified) {
+          this.save();
+        }
       } else {
         this.schema = {
           users: DEFAULT_USERS,

@@ -1,0 +1,93 @@
+{
+  "users": [
+    {
+      "id": "u-1",
+      "name": "Admin Sensei",
+      "email": "admin@karate.com",
+      "passwordHash": "240be518fabd2724ddb6f04eeb1da5967448d7e831c08c8fa822809f74c720a9",
+      "role": "admin",
+      "createdAt": "2026-01-01T00:00:00.000Z"
+    },
+    {
+      "name": "Instructor Ken",
+      "email": "instructor@karate.com",
+      "passwordHash": "c1437a55f6e93b7049c4064af1b0920974e383a435283f5d0b0496ee4a8a47b5",
+      "role": "instructor",
+      "id": "u-1784369631045-17",
+      "createdAt": "2026-07-18T10:13:51.045Z"
+    }
+  ],
+  "batches": [
+    {
+      "id": "b-1",
+      "name": "Dragons (Kids 5-10)",
+      "schedule": "Mon/Wed 4:00 PM - 5:00 PM",
+      "createdAt": "2026-01-01T00:00:00.000Z"
+    },
+    {
+      "id": "b-2",
+      "name": "Samurai (Teens Advanced)",
+      "schedule": "Mon/Wed 5:15 PM - 6:30 PM",
+      "createdAt": "2026-01-01T00:00:00.000Z"
+    },
+    {
+      "id": "b-3",
+      "name": "Adults Open Class",
+      "schedule": "Tue/Thu 7:00 PM - 8:30 PM",
+      "createdAt": "2026-01-02T00:00:00.000Z"
+    },
+    {
+      "id": "b-4",
+      "name": "Weekend Black Belt prep",
+      "schedule": "Sat 9:00 AM - 11:00 AM",
+      "createdAt": "2026-01-03T00:00:00.000Z"
+    }
+  ],
+  "students": [],
+  "attendance_records": [],
+  "belt_history": [],
+  "audit_logs": [
+    {
+      "id": "log-1784369631109-923",
+      "userId": "u-1",
+      "action": "USER_LOGIN",
+      "details": "User Admin Sensei logged in successfully.",
+      "createdAt": "2026-07-18T10:13:51.109Z"
+    },
+    {
+      "id": "log-1784369631128-878",
+      "userId": "u-1784369631045-17",
+      "action": "USER_LOGIN",
+      "details": "User Instructor Ken logged in successfully.",
+      "createdAt": "2026-07-18T10:13:51.128Z"
+    },
+    {
+      "id": "log-1784369631147-618",
+      "userId": "u-1",
+      "action": "CREATE_STUDENT",
+      "details": "Added student Integration Karateka.",
+      "createdAt": "2026-07-18T10:13:51.147Z"
+    },
+    {
+      "id": "log-1784369631180-224",
+      "userId": "u-1784369631045-17",
+      "action": "MARK_ATTENDANCE",
+      "details": "Marked attendance for Dragons (Kids 5-10) on 2026-07-18 (Tournament Practice).",
+      "createdAt": "2026-07-18T10:13:51.180Z"
+    },
+    {
+      "id": "log-1784369631203-348",
+      "userId": "u-1",
+      "action": "PROMOTE_STUDENT",
+      "details": "Promoted student Integration Karateka from White to Yellow.",
+      "createdAt": "2026-07-18T10:13:51.203Z"
+    },
+    {
+      "id": "log-1784369631214-556",
+      "userId": "u-1",
+      "action": "DELETE_STUDENT",
+      "details": "Deleted student Integration Karateka and cascaded records.",
+      "createdAt": "2026-07-18T10:13:51.214Z"
+    }
+  ]
+}

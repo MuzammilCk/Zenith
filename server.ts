@@ -25,7 +25,7 @@ export async function createServer() {
   });
 
   // Serve Frontend assets
-  if (process.env.NODE_ENV !== 'production') {
+  if (process.env.NODE_ENV !== 'production' && process.env.NODE_ENV !== 'test') {
     console.log('Loading Vite middleware in development mode...');
     const vite = await createViteServer({
       server: { middlewareMode: true },

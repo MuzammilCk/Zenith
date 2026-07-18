@@ -5,9 +5,10 @@
 
 import { test } from 'node:test';
 import assert from 'node:assert';
+import * as crypto from 'node:crypto';
 import { createServer } from '../../server.js';
 import { db } from '../db/database.js';
-import { BeltRank, StudentStatus, AttendanceStatus } from '../types.js';
+import { BeltRank, StudentStatus, AttendanceStatus, UserRole } from '../types.js';
 
 const TEST_PORT = 3099;
 const BASE_URL = `http://127.0.0.1:${TEST_PORT}/api`;
@@ -19,6 +20,14 @@ test('Full-Stack Integration Test Suite', async (t) => {
 
   // Reset database before integration checks
   db.clearAll();
+
+  // Dynamically seed instructor user for integration checks
+  db.createUser({
+    name: 'Instructor Ken',
+    email: 'instructor@karate.com',
+    passwordHash: crypto.createHash('sha256').update('instructor123').digest('hex'),
+    role: UserRole.INSTRUCTOR,
+  });
 
   // Tokens
   let adminToken = '';
