@@ -50,14 +50,14 @@ export default function Layout({
   };
 
   return (
-    <div className="min-h-screen bg-[var(--color-canvas-parchment)] font-sans text-[var(--color-ink)] flex flex-col">
-      <nav className="sticky top-0 z-50 border-b border-white/10 bg-[var(--color-surface-black)]/95 text-[var(--color-on-dark)] backdrop-blur">
+    <div className="min-h-screen bg-[var(--color-canvas)] font-sans text-[var(--color-ink)] flex flex-col">
+      <nav className="sticky top-0 z-50 border-b border-[var(--color-hairline)] bg-[var(--color-canvas)]">
         <div className="mx-auto flex h-14 w-full max-w-[1440px] items-center justify-between px-4 sm:px-6 lg:px-8">
           <div className="flex items-center gap-5">
             <button
               onClick={() => handleTabClick('dashboard')}
-              className="display-md cursor-pointer text-[var(--color-on-dark)]"
-              style={{ fontSize: 21, letterSpacing: -0.28 }}
+              className="display-md cursor-pointer text-[var(--color-ink)]"
+              style={{ fontSize: 20, letterSpacing: -0.4 }}
             >
               DOJO
             </button>
@@ -68,10 +68,10 @@ export default function Layout({
                   <button
                     key={item.id}
                     onClick={() => handleTabClick(item.id)}
-                    className={`nav-link-ut rounded-full px-3 py-1.5 transition-all ${
+                    className={`nav-link-ut rounded-full px-3 py-1.5 transition-colors ${
                       isActive
-                        ? 'bg-white/10 text-[var(--color-on-dark)]'
-                        : 'text-[var(--color-body-muted)] hover:bg-white/10 hover:text-[var(--color-on-dark)]'
+                        ? 'bg-[var(--color-hairline-soft)] text-[var(--color-ink)]'
+                        : 'text-[var(--color-body)] hover:bg-[var(--color-hairline-soft)] hover:text-[var(--color-ink)]'
                     }`}
                   >
                     {item.label}
@@ -81,13 +81,13 @@ export default function Layout({
             </div>
           </div>
           <div className="flex items-center gap-3">
-            <span className="caption hidden text-[var(--color-body-muted)] sm:block">{currentUser.name}</span>
+            <span className="caption hidden text-[var(--color-mute)] sm:block">{currentUser.name}</span>
             <button onClick={onLogout} className="btn-dark-utility text-xs py-1 px-3">
               <LogOut className="mr-1.5 h-3.5 w-3.5" />
               Sign Out
             </button>
             <button
-              className="rounded-full p-1.5 text-[var(--color-body-muted)] transition-colors hover:bg-white/10 hover:text-white md:hidden"
+              className="rounded-full p-1.5 text-[var(--color-mute)] transition-colors hover:bg-[var(--color-hairline-soft)] hover:text-[var(--color-ink)] md:hidden"
               onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
             >
               <Menu className="h-4.5 w-4.5" />
@@ -97,15 +97,15 @@ export default function Layout({
       </nav>
 
       {isMobileMenuOpen && (
-        <div className="border-b border-[var(--color-hairline)] bg-[var(--color-surface-tile-2)] px-4 py-3 md:hidden">
+        <div className="border-b border-[var(--color-hairline)] bg-[var(--color-canvas-elevated)] px-4 py-3 md:hidden">
           {allowedNavItems.map((item) => {
             const isActive = currentTab === item.id;
             return (
               <button
                 key={item.id}
                 onClick={() => handleTabClick(item.id)}
-                className={`block w-full rounded-lg px-3 py-2 text-left font-sans text-[17px] transition-colors ${
-                  isActive ? 'bg-white/10 text-[var(--color-on-dark)]' : 'text-[var(--color-body-muted)] hover:bg-white/10 hover:text-[var(--color-on-dark)]'
+                className={`block w-full rounded-lg px-3 py-2 text-left font-sans text-[14px] transition-colors ${
+                  isActive ? 'bg-[var(--color-hairline-soft)] text-[var(--color-ink)]' : 'text-[var(--color-body)] hover:bg-[var(--color-hairline-soft)] hover:text-[var(--color-ink)]'
                 }`}
               >
                 {item.label}
@@ -115,7 +115,7 @@ export default function Layout({
         </div>
       )}
 
-      <div className="border-b border-[var(--color-hairline)] bg-[var(--color-canvas-parchment)]/90 frosted">
+      <div className="border-b border-[var(--color-hairline)] bg-[var(--color-canvas)]">
         <div className="mx-auto flex w-full max-w-[1440px] items-center justify-between px-4 py-3 sm:px-6 lg:px-8">
           <h2 className="tagline text-[var(--color-ink)]">
             {currentTab === 'dashboard' && 'Karate Dojo Portal'}
@@ -124,7 +124,7 @@ export default function Layout({
             {currentTab === 'users' && 'User Administration'}
             {currentTab === 'audit-logs' && 'System Security Trails'}
           </h2>
-          <span className="fine-print text-[var(--color-ink-muted-48)]">
+          <span className="fine-print text-[var(--color-mute)]">
             {new Date().toLocaleDateString('en-US', { weekday: 'long', month: 'long', day: 'numeric' })}
           </span>
         </div>
@@ -133,53 +133,6 @@ export default function Layout({
       <main className="mx-auto flex-1 w-full max-w-[1440px] px-4 py-6 sm:px-6 sm:py-8 lg:px-8 lg:py-10">
         {children}
       </main>
-
-      <footer className="border-t border-[var(--color-hairline)] bg-[var(--color-canvas-parchment)]">
-        <div className="mx-auto max-w-[1440px] px-4 py-8 sm:px-6 lg:px-8">
-          <div className="mb-10 grid grid-cols-2 gap-8 md:grid-cols-4">
-            <div>
-              <h3 className="caption-strong mb-3 text-[var(--color-ink)]">Dojo Portal</h3>
-              <ul className="space-y-2">
-                <li><span className="text-link fine-print cursor-pointer">About Karate Management</span></li>
-                <li><span className="text-link fine-print cursor-pointer">System Overview</span></li>
-                <li><span className="text-link fine-print cursor-pointer">Privacy Policy</span></li>
-                <li><span className="text-link fine-print cursor-pointer">Terms of Use</span></li>
-              </ul>
-            </div>
-            <div>
-              <h3 className="caption-strong mb-3 text-[var(--color-ink)]">Features</h3>
-              <ul className="space-y-2">
-                <li><span className="text-link fine-print cursor-pointer">Student Management</span></li>
-                <li><span className="text-link fine-print cursor-pointer">Attendance Tracking</span></li>
-                <li><span className="text-link fine-print cursor-pointer">Belt Rankings</span></li>
-                <li><span className="text-link fine-print cursor-pointer">Analytics</span></li>
-              </ul>
-            </div>
-            <div>
-              <h3 className="caption-strong mb-3 text-[var(--color-ink)]">For Dojos</h3>
-              <ul className="space-y-2">
-                <li><span className="text-link fine-print cursor-pointer">Pricing Plans</span></li>
-                <li><span className="text-link fine-print cursor-pointer">Enterprise Setup</span></li>
-                <li><span className="text-link fine-print cursor-pointer">API Docs</span></li>
-                <li><span className="text-link fine-print cursor-pointer">Support</span></li>
-              </ul>
-            </div>
-            <div>
-              <h3 className="caption-strong mb-3 text-[var(--color-ink)]">Resources</h3>
-              <ul className="space-y-2">
-                <li><span className="text-link fine-print cursor-pointer">Documentation</span></li>
-                <li><span className="text-link fine-print cursor-pointer">Report Issue</span></li>
-                <li><span className="text-link fine-print cursor-pointer">Feature Roadmap</span></li>
-                <li><span className="text-link fine-print cursor-pointer">System Status</span></li>
-              </ul>
-            </div>
-          </div>
-          <div className="flex flex-col items-center justify-between gap-3 border-t border-[var(--color-hairline)] pt-6 sm:flex-row">
-            <p className="fine-print text-[var(--color-ink-muted-48)]">Copyright 2026 Karate Dojo Portal. All rights reserved.</p>
-            <p className="fine-print text-[var(--color-ink-muted-48)]">Karate Dojo Portal</p>
-          </div>
-        </div>
-      </footer>
     </div>
   );
 }

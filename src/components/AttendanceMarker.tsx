@@ -270,31 +270,31 @@ export default function AttendanceMarker({ token, userRole }: AttendanceMarkerPr
 
       {/* Feedback */}
       {error && (
-        <div className="flex items-start gap-3 p-4 border border-[#e60012] rounded-lg bg-[#e60012]/5" id="attendance-error-box">
-          <AlertCircle className="w-5 h-5 text-[#e60012] flex-shrink-0 mt-0.5" />
-          <span className="caption text-[#e60012]">{error}</span>
+        <div className="flex items-start gap-3 p-4 border border-[var(--color-error)] rounded-lg bg-[var(--color-error)]/5" id="attendance-error-box">
+          <AlertCircle className="w-5 h-5 text-[var(--color-error)] flex-shrink-0 mt-0.5" />
+          <span className="caption text-[var(--color-error)]">{error}</span>
         </div>
       )}
 
       {success && (
-        <div className="flex items-start gap-3 p-4 border border-[#059669] rounded-lg bg-[#059669]/5" id="attendance-success-box">
-          <CheckCircle className="w-5 h-5 text-[#059669] flex-shrink-0 mt-0.5" />
-          <span className="caption text-[#059669]">{success}</span>
+        <div className="flex items-start gap-3 p-4 border border-[var(--color-link)] rounded-lg bg-[var(--color-link)]/5" id="attendance-success-box">
+          <CheckCircle className="w-5 h-5 text-[var(--color-link)] flex-shrink-0 mt-0.5" />
+          <span className="caption text-[var(--color-link)]">{success}</span>
         </div>
       )}
 
       {/* Roster */}
       {students.length > 0 && (
         <div className="card-utility p-0 overflow-hidden" id="attendance-sheet">
-          <div className="bg-[var(--color-surface-tile-1)] text-[var(--color-on-dark)] px-6 py-4 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+          <div className="bg-[var(--color-canvas-parchment)] text-[var(--color-ink)] px-6 py-4 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
             <div>
-              <h4 className="tagline text-[var(--color-on-dark)]" style={{ fontSize: 21 }}>{selectedBatchObj?.name}</h4>
-              <p className="caption text-[var(--color-body-muted)] mt-1">Class Schedule: {selectedBatchObj?.schedule}</p>
+              <h4 className="tagline text-[var(--color-ink)]" style={{ fontSize: 20 }}>{selectedBatchObj?.name}</h4>
+              <p className="caption text-[var(--color-mute)] mt-1">Class Schedule: {selectedBatchObj?.schedule}</p>
             </div>
 
             {!isAdmin ? (
               <div className="flex items-center gap-2">
-                <span className="caption-strong text-[var(--color-body-muted)] mr-2">Quick Mark:</span>
+                <span className="caption-strong text-[var(--color-mute)] mr-2">Quick Mark:</span>
                 <button
                   type="button"
                   onClick={() => handleBulkMark(AttendanceStatus.PRESENT)}
@@ -313,7 +313,7 @@ export default function AttendanceMarker({ token, userRole }: AttendanceMarkerPr
                 </button>
               </div>
             ) : (
-              <span className="badge-status" style={{ backgroundColor: 'rgba(255,255,255,0.1)', color: 'var(--color-body-muted)' }}>
+              <span className="badge-status" style={{ backgroundColor: 'var(--color-hairline-soft)', color: 'var(--color-mute)' }}>
                 Read-Only View
               </span>
             )}
@@ -347,8 +347,8 @@ export default function AttendanceMarker({ token, userRole }: AttendanceMarkerPr
                         isAdmin ? 'cursor-not-allowed opacity-50' : 'cursor-pointer'
                       } ${
                         currentStatus === AttendanceStatus.PRESENT
-                          ? 'bg-[#4ade80] text-white border-transparent'
-                          : 'bg-[var(--color-canvas)] text-[var(--color-ink-muted-48)] border-[var(--color-hairline)] hover:text-[#4ade80] hover:border-[#4ade80]'
+                          ? 'bg-[var(--color-link)] text-white border-transparent'
+                          : 'bg-[var(--color-canvas)] text-[var(--color-ink-muted-48)] border-[var(--color-hairline)] hover:text-[var(--color-link)] hover:border-[var(--color-link)]'
                       }`}
                       title={isAdmin ? 'Present (Read-Only)' : 'Present'}
                       id={`mark-present-${student.id}`}
@@ -364,8 +364,8 @@ export default function AttendanceMarker({ token, userRole }: AttendanceMarkerPr
                         isAdmin ? 'cursor-not-allowed opacity-50' : 'cursor-pointer'
                       } ${
                         currentStatus === AttendanceStatus.TARDY
-                          ? 'bg-[#60a5fa] text-white border-transparent'
-                          : 'bg-[var(--color-canvas)] text-[var(--color-ink-muted-48)] border-[var(--color-hairline)] hover:text-[#60a5fa] hover:border-[#60a5fa]'
+                          ? 'bg-[var(--color-warning)] text-white border-transparent'
+                          : 'bg-[var(--color-canvas)] text-[var(--color-ink-muted-48)] border-[var(--color-hairline)] hover:text-[var(--color-warning)] hover:border-[var(--color-warning)]'
                       }`}
                       title={isAdmin ? 'Tardy (Read-Only)' : 'Tardy'}
                       id={`mark-tardy-${student.id}`}
@@ -381,8 +381,8 @@ export default function AttendanceMarker({ token, userRole }: AttendanceMarkerPr
                         isAdmin ? 'cursor-not-allowed opacity-50' : 'cursor-pointer'
                       } ${
                         currentStatus === AttendanceStatus.ABSENT
-                          ? 'bg-[#f87171] text-white border-transparent'
-                          : 'bg-[var(--color-canvas)] text-[var(--color-ink-muted-48)] border-[var(--color-hairline)] hover:text-[#f87171] hover:border-[#f87171]'
+                          ? 'bg-[var(--color-error)] text-white border-transparent'
+                          : 'bg-[var(--color-canvas)] text-[var(--color-ink-muted-48)] border-[var(--color-hairline)] hover:text-[var(--color-error)] hover:border-[var(--color-error)]'
                       }`}
                       title={isAdmin ? 'Absent (Read-Only)' : 'Absent'}
                       id={`mark-absent-${student.id}`}

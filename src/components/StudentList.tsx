@@ -16,16 +16,17 @@ import {
   HelpCircle,
 } from 'lucide-react';
 import { Student, Batch, BeltRank, StudentStatus, UserRole } from '../types.js';
-import StudentForm from './StudentForm.js';
 import BeltPromoter from './BeltPromoter.js';
 
 interface StudentListProps {
   token: string;
   userRole: UserRole;
   onViewStudent: (studentId: string) => void;
+  onEnroll: () => void;
+  onEditStudent: (studentId: string) => void;
 }
 
-export default function StudentList({ token, userRole, onViewStudent }: StudentListProps) {
+export default function StudentList({ token, userRole, onViewStudent, onEnroll, onEditStudent }: StudentListProps) {
   const [students, setStudents] = useState<any[]>([]);
   const [batches, setBatches] = useState<Batch[]>([]);
   const [loading, setLoading] = useState(true);
@@ -42,8 +43,6 @@ export default function StudentList({ token, userRole, onViewStudent }: StudentL
   const [totalPages, setTotalPages] = useState(1);
   const [totalRecords, setTotalRecords] = useState(0);
 
-  const [isFormOpen, setIsFormOpen] = useState(false);
-  const [studentToEdit, setStudentToEdit] = useState<Student | null>(null);
   const [studentToPromote, setStudentToPromote] = useState<Student | null>(null);
 
   useEffect(() => {
@@ -159,10 +158,7 @@ export default function StudentList({ token, userRole, onViewStudent }: StudentL
             </p>
           </div>
           <button
-            onClick={() => {
-              setStudentToEdit(null);
-              setIsFormOpen(true);
-            }}
+            onClick={onEnroll}
             className="btn-primary"
             id="enroll-student-btn"
           >
@@ -268,8 +264,12 @@ export default function StudentList({ token, userRole, onViewStudent }: StudentL
                   <tr key={student.id} id={`student-row-${student.id}`}>
                     <td>
                       <div className="flex items-center gap-3">
-                        <div className="flex h-10 w-10 items-center justify-center rounded-full bg-[var(--color-canvas-parchment)] text-[var(--color-ink)] body-strong">
-                          {student.name.charAt(0)}
+                        <div className="flex h-10 w-10 items-center justify-center overflow-hidden rounded-full bg-[var(--color-canvas-parchment)] text-[var(--color-ink)] body-strong">
+                          {student.image ? (
+                            <img src={student.image} alt={student.name} className="h-full w-full object-cover" />
+                          ) : (
+                            student.name.charAt(0)
+                          )}
                         </div>
                         <div>
                           <button onClick={() => onViewStudent(student.id)} className="body-strong text-[var(--color-ink)] text-link" id={`btn-view-${student.id}`}>
@@ -284,7 +284,7 @@ export default function StudentList({ token, userRole, onViewStudent }: StudentL
                     </td>
                     <td className="caption text-[var(--color-ink)]">{student.batchName}</td>
                     <td>
-                      <span className={`badge-status ${student.status === StudentStatus.ACTIVE ? 'bg-[#059669]/10 text-[#059669]' : 'bg-[var(--color-canvas-parchment)] text-[var(--color-ink-muted-48)]'}`}>
+                      <span className={`badge-status ${student.status === StudentStatus.ACTIVE ? 'bg-[var(--color-link)]/10 text-[var(--color-link)]' : 'bg-[var(--color-canvas-parchment)] text-[var(--color-ink-muted-48)]'}`}>
                         {student.status}
                       </span>
                     </td>
@@ -294,7 +294,7 @@ export default function StudentList({ token, userRole, onViewStudent }: StudentL
                         <button onClick={() => onViewStudent(student.id)} className="rounded-full p-2 text-[var(--color-ink-muted-48)] transition-colors hover:bg-[var(--color-canvas-parchment)] hover:text-[var(--color-primary)]" title="View">
                           <Eye className="h-4 w-4" />
                         </button>
-                        <button onClick={() => { setStudentToEdit(student); setIsFormOpen(true); }} className="rounded-full p-2 text-[var(--color-ink-muted-48)] transition-colors hover:bg-[var(--color-canvas-parchment)] hover:text-[var(--color-primary)]" title="Edit" id={`btn-edit-${student.id}`}>
+                        <button onClick={() => onEditStudent(student.id)} className="rounded-full p-2 text-[var(--color-ink-muted-48)] transition-colors hover:bg-[var(--color-canvas-parchment)] hover:text-[var(--color-primary)]" title="Edit" id={`btn-edit-${student.id}`}>
                           <Edit className="h-4 w-4" />
                         </button>
                         {userRole === UserRole.ADMIN && (
@@ -303,7 +303,7 @@ export default function StudentList({ token, userRole, onViewStudent }: StudentL
                           </button>
                         )}
                         {userRole === UserRole.ADMIN && (
-                          <button onClick={() => handleDelete(student)} className="rounded-full p-2 text-[var(--color-ink-muted-48)] transition-colors hover:bg-[#e60012]/10 hover:text-[#e60012]" title="Delete" id={`btn-delete-${student.id}`}>
+                          <button onClick={() => handleDelete(student)} className="rounded-full p-2 text-[var(--color-ink-muted-48)] transition-colors hover:bg-[var(--color-error)]/10 hover:text-[var(--color-error)]" title="Delete" id={`btn-delete-${student.id}`}>
                             <Trash2 className="h-4 w-4" />
                           </button>
                         )}
@@ -330,15 +330,6 @@ export default function StudentList({ token, userRole, onViewStudent }: StudentL
             </div>
           )}
         </div>
-      )}
-
-      {isFormOpen && (
-        <StudentForm
-          token={token}
-          studentToEdit={studentToEdit}
-          onClose={() => { setIsFormOpen(false); setStudentToEdit(null); }}
-          onSaveSuccess={() => { setIsFormOpen(false); setStudentToEdit(null); fetchStudents(); }}
-        />
       )}
 
       {studentToPromote && (

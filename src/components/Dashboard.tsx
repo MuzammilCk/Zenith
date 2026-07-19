@@ -212,16 +212,16 @@ export default function Dashboard({ token }: DashboardProps) {
 
                   return (
                     <div key={trend.date} className="group relative flex flex-1 flex-col items-center">
-                      <div className="pointer-events-none absolute bottom-full z-10 mb-2 whitespace-nowrap rounded-lg bg-[var(--color-surface-tile-1)] px-3 py-2 text-[var(--color-on-dark)] opacity-0 transition-opacity group-hover:opacity-100 fine-print">
+                      <div className="pointer-events-none absolute bottom-full z-10 mb-2 whitespace-nowrap rounded-lg bg-[var(--color-ink)] px-3 py-2 text-[var(--color-on-dark)] opacity-0 transition-opacity group-hover:opacity-100 fine-print">
                         <p className="mb-1 border-b border-white/10 pb-1 font-semibold">{trend.date}</p>
-                        <p className="text-[#4ade80]">Present: {trend.present}</p>
-                        <p className="text-[#60a5fa]">Tardy: {trend.tardy}</p>
-                        <p className="text-[#f87171]">Absent: {trend.absent}</p>
+                        <p className="text-[var(--color-link)]">Present: {trend.present}</p>
+                        <p className="text-[var(--color-warning)]">Tardy: {trend.tardy}</p>
+                        <p className="text-[var(--color-error)]">Absent: {trend.absent}</p>
                       </div>
                       <div className="flex h-[180px] w-7 flex-col justify-end space-y-px overflow-hidden rounded-t-sm bg-[var(--color-canvas-parchment)]">
-                        {trend.absent > 0 && <div className="w-full bg-[#f87171]" style={{ height: `${absentPct}%` }} />}
-                        {trend.tardy > 0 && <div className="w-full bg-[#60a5fa]" style={{ height: `${tardyPct}%` }} />}
-                        {trend.present > 0 && <div className="w-full bg-[#4ade80]" style={{ height: `${presentPct}%` }} />}
+                        {trend.absent > 0 && <div className="w-full bg-[var(--color-error)]" style={{ height: `${absentPct}%` }} />}
+                        {trend.tardy > 0 && <div className="w-full bg-[var(--color-warning)]" style={{ height: `${tardyPct}%` }} />}
+                        {trend.present > 0 && <div className="w-full bg-[var(--color-link)]" style={{ height: `${presentPct}%` }} />}
                       </div>
                       <span className="mt-2 rotate-12 origin-left whitespace-nowrap fine-print text-[var(--color-ink-muted-48)]">
                         {trend.date.substring(5)}
@@ -236,15 +236,15 @@ export default function Dashboard({ token }: DashboardProps) {
           {stats.attendanceTrend.length > 0 && (
             <div className="mt-4 flex items-center justify-center gap-6 fine-print">
               <div className="flex items-center gap-1.5">
-                <span className="h-2.5 w-2.5 rounded-full bg-[#4ade80]" />
-                <span className="text-[var(--color-ink)]">Present</span>
-              </div>
-              <div className="flex items-center gap-1.5">
-                <span className="h-2.5 w-2.5 rounded-full bg-[#60a5fa]" />
-                <span className="text-[var(--color-ink)]">Tardy</span>
-              </div>
-              <div className="flex items-center gap-1.5">
-                <span className="h-2.5 w-2.5 rounded-full bg-[#f87171]" />
+                  <span className="h-2.5 w-2.5 rounded-full bg-[var(--color-link)]" />
+                  <span className="text-[var(--color-ink)]">Present</span>
+                </div>
+                <div className="flex items-center gap-1.5">
+                  <span className="h-2.5 w-2.5 rounded-full bg-[var(--color-warning)]" />
+                  <span className="text-[var(--color-ink)]">Tardy</span>
+                </div>
+                <div className="flex items-center gap-1.5">
+                  <span className="h-2.5 w-2.5 rounded-full bg-[var(--color-error)]" />
                 <span className="text-[var(--color-ink)]">Absent</span>
               </div>
             </div>

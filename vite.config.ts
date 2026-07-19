@@ -16,7 +16,13 @@ export default defineConfig(() => {
       // Do not modifyâfile watching is disabled to prevent flickering during agent edits.
       hmr: process.env.DISABLE_HMR !== 'true',
       // Disable file watching when DISABLE_HMR is true to save CPU during agent edits.
-      watch: process.env.DISABLE_HMR === 'true' ? null : {},
+      // When watching is enabled, ignore the runtime data directory so writes to
+      // db.json (from API POST/PUT/DELETE) don't trigger a full page reload that
+      // would discard client-side navigation (e.g. redirect back to Users tab).
+      watch:
+        process.env.DISABLE_HMR === 'true'
+          ? null
+          : { ignored: ['**/data/**', '**/db.json'] },
     },
   };
 });

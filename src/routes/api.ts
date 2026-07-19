@@ -89,7 +89,7 @@ apiRouter.get('/users/:id', [authenticate as any, requireRole([UserRole.ADMIN]) 
 
 // POST /api/users
 apiRouter.post('/users', [authenticate as any, requireRole([UserRole.ADMIN]) as any], (req: AuthenticatedRequest, res: Response) => {
-  const { name, email, password, role, status } = req.body;
+  const { name, email, password, role, status, image } = req.body;
 
   if (!name || name.trim().length < 2) {
     res.status(400).json({ error: 'Name is required.' });
@@ -121,6 +121,7 @@ apiRouter.post('/users', [authenticate as any, requireRole([UserRole.ADMIN]) as 
     role: role || UserRole.INSTRUCTOR,
     status: status || 'active',
     createdBy: req.user!.id,
+    image: typeof image === 'string' ? image : undefined,
   });
 
   db.createAuditLog(req.user!.id, 'CREATE_USER', `Created user account for ${newUser.name} (${newUser.role}).`);
@@ -137,7 +138,7 @@ apiRouter.put('/users/:id', [authenticate as any, requireRole([UserRole.ADMIN]) 
     return;
   }
 
-  const { name, email, password, role, status } = req.body;
+  const { name, email, password, role, status, image } = req.body;
   const updates: any = {};
 
   if (name !== undefined) {
@@ -191,6 +192,14 @@ apiRouter.put('/users/:id', [authenticate as any, requireRole([UserRole.ADMIN]) 
       return;
     }
     updates.status = status;
+  }
+
+  if (image !== undefined) {
+    if (image !== '' && typeof image !== 'string') {
+      res.status(400).json({ error: 'Invalid image data.' });
+      return;
+    }
+    updates.image = image;
   }
 
   const updatedUser = db.updateUser(req.params.id, updates);
@@ -350,7 +359,23 @@ apiRouter.get('/students/:id', authenticate as any, (req, res) => {
 
 // POST /api/students (Create Student)
 apiRouter.post('/students', authenticate as any, (req: AuthenticatedRequest, res) => {
-  const { name, email, phone, dateOfBirth, gender, currentBelt, status, batchId, joinedDate, notes } = req.body;
+  const {
+    name,
+    email,
+    phone,
+    dateOfBirth,
+    gender,
+    currentBelt,
+    status,
+    batchId,
+    joinedDate,
+    notes,
+    image,
+    address,
+    emergencyContactName,
+    emergencyContactPhone,
+    medicalNotes,
+  } = req.body;
 
   // Validation
   if (!name || name.trim().length < 2) {
@@ -411,6 +436,11 @@ apiRouter.post('/students', authenticate as any, (req: AuthenticatedRequest, res
     batchId,
     joinedDate,
     notes: notes ? notes.trim() : '',
+    ...(image !== undefined && { image: String(image) }),
+    ...(address !== undefined && { address: address.trim() }),
+    ...(emergencyContactName !== undefined && { emergencyContactName: emergencyContactName.trim() }),
+    ...(emergencyContactPhone !== undefined && { emergencyContactPhone: emergencyContactPhone.trim() }),
+    ...(medicalNotes !== undefined && { medicalNotes: medicalNotes.trim() }),
   });
 
   db.createAuditLog(req.user!.id, 'CREATE_STUDENT', `Added student ${newStudent.name}.`);
@@ -426,7 +456,22 @@ apiRouter.put('/students/:id', authenticate as any, (req: AuthenticatedRequest, 
     return;
   }
 
-  const { name, email, phone, dateOfBirth, gender, status, batchId, joinedDate, notes } = req.body;
+  const {
+    name,
+    email,
+    phone,
+    dateOfBirth,
+    gender,
+    status,
+    batchId,
+    joinedDate,
+    notes,
+    image,
+    address,
+    emergencyContactName,
+    emergencyContactPhone,
+    medicalNotes,
+  } = req.body;
 
   // Validation
   if (name !== undefined && name.trim().length < 2) {
@@ -486,6 +531,11 @@ apiRouter.put('/students/:id', authenticate as any, (req: AuthenticatedRequest, 
     ...(batchId !== undefined && { batchId }),
     ...(joinedDate !== undefined && { joinedDate }),
     ...(notes !== undefined && { notes: notes ? notes.trim() : '' }),
+    ...(image !== undefined && { image: String(image) }),
+    ...(address !== undefined && { address: address.trim() }),
+    ...(emergencyContactName !== undefined && { emergencyContactName: emergencyContactName.trim() }),
+    ...(emergencyContactPhone !== undefined && { emergencyContactPhone: emergencyContactPhone.trim() }),
+    ...(medicalNotes !== undefined && { medicalNotes: medicalNotes.trim() }),
   });
 
   db.createAuditLog(req.user!.id, 'UPDATE_STUDENT', `Updated student details for ${student.name}.`);

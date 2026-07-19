@@ -7,10 +7,7 @@ import React, { useState, useEffect } from 'react';
 import {
   User,
   Search,
-  UserPlus,
   Edit2,
-  Shield,
-  Key,
   CheckCircle,
   XCircle,
   Trash2,
@@ -23,12 +20,15 @@ import { UserRole } from '../types.js';
 
 interface UserManagementProps {
   token: string;
+  onAddUser: () => void;
+  onEditUser: (id: string) => void;
 }
 
 interface ManagedUser {
   id: string;
   name: string;
   email: string;
+  image?: string;
   role: UserRole;
   status: 'active' | 'inactive';
   createdBy?: string;
@@ -36,30 +36,16 @@ interface ManagedUser {
   updatedAt?: string;
 }
 
-export default function UserManagement({ token }: UserManagementProps) {
+export default function UserManagement({ token, onAddUser, onEditUser }: UserManagementProps) {
   const [users, setUsers] = useState<ManagedUser[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [searchQuery, setSearchQuery] = useState('');
 
-  const [isModalOpen, setIsModalOpen] = useState(false);
-  const [modalMode, setModalMode] = useState<'create' | 'edit'>('create');
-  const [selectedUser, setSelectedUser] = useState<ManagedUser | null>(null);
-
   const [deleteConfirmId, setDeleteConfirmId] = useState<string | null>(null);
   const [deleteConfirmName, setDeleteConfirmName] = useState<string>('');
   const [deleteError, setDeleteError] = useState<string | null>(null);
   const [deleting, setDeleting] = useState(false);
-
-  const [name, setName] = useState('');
-  const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
-  const [role, setRole] = useState<UserRole>(UserRole.INSTRUCTOR);
-  const [status, setStatus] = useState<'active' | 'inactive'>('active');
-
-  const [formError, setFormError] = useState<string | null>(null);
-  const [formSuccess, setFormSuccess] = useState<string | null>(null);
-  const [submitting, setSubmitting] = useState(false);
 
   const fetchUsers = async () => {
     setLoading(true);
@@ -83,32 +69,6 @@ export default function UserManagement({ token }: UserManagementProps) {
   useEffect(() => {
     fetchUsers();
   }, [token]);
-
-  const handleOpenCreateModal = () => {
-    setModalMode('create');
-    setSelectedUser(null);
-    setName('');
-    setEmail('');
-    setPassword('');
-    setRole(UserRole.INSTRUCTOR);
-    setStatus('active');
-    setFormError(null);
-    setFormSuccess(null);
-    setIsModalOpen(true);
-  };
-
-  const handleOpenEditModal = (user: ManagedUser) => {
-    setModalMode('edit');
-    setSelectedUser(user);
-    setName(user.name);
-    setEmail(user.email);
-    setPassword('');
-    setRole(user.role);
-    setStatus(user.status || 'active');
-    setFormError(null);
-    setFormSuccess(null);
-    setIsModalOpen(true);
-  };
 
   const handleToggleStatus = async (user: ManagedUser) => {
     const newStatus = user.status === 'active' ? 'inactive' : 'active';
@@ -158,54 +118,6 @@ export default function UserManagement({ token }: UserManagementProps) {
     }
   };
 
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    setFormError(null);
-    setFormSuccess(null);
-    setSubmitting(true);
-
-    const payload: any = { name, email, role, status };
-    if (modalMode === 'create' || password) {
-      payload.password = password;
-    }
-
-    try {
-      const url = modalMode === 'create' ? '/api/users' : `/api/users/${selectedUser!.id}`;
-      const method = modalMode === 'create' ? 'POST' : 'PUT';
-
-      const res = await fetch(url, {
-        method,
-        headers: {
-          'Content-Type': 'application/json',
-          Authorization: `Bearer ${token}`,
-        },
-        body: JSON.stringify(payload),
-      });
-
-      const data = await res.json();
-
-      if (!res.ok) {
-        throw new Error(data.error || 'Failed to save user account.');
-      }
-
-      setFormSuccess(
-        modalMode === 'create'
-          ? `User "${name}" has been created successfully.`
-          : `User "${name}" has been updated successfully.`
-      );
-
-      fetchUsers();
-
-      setTimeout(() => {
-        setIsModalOpen(false);
-      }, 1500);
-    } catch (err: any) {
-      setFormError(err.message || 'An error occurred.');
-    } finally {
-      setSubmitting(false);
-    }
-  };
-
   const filteredUsers = users.filter(
     (u) =>
       u.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
@@ -223,8 +135,7 @@ export default function UserManagement({ token }: UserManagementProps) {
             Create instructor accounts, reset credentials, and manage authorization.
           </p>
         </div>
-        <button onClick={handleOpenCreateModal} className="btn-primary" id="btn-create-user">
-          <UserPlus className="w-4 h-4 mr-2" />
+        <button onClick={onAddUser} className="btn-primary" id="btn-create-user">
           Add New Account
         </button>
       </div>
@@ -256,7 +167,7 @@ export default function UserManagement({ token }: UserManagementProps) {
         </div>
       ) : error ? (
         <div className="card-utility text-center space-y-4">
-          <AlertCircle className="w-10 h-10 text-[#e60012] mx-auto" />
+          <AlertCircle className="w-10 h-10 text-[var(--color-error)] mx-auto" />
           <p className="body-strong text-[var(--color-ink)]">{error}</p>
           <button onClick={fetchUsers} className="btn-primary">Retry</button>
         </div>
@@ -284,8 +195,12 @@ export default function UserManagement({ token }: UserManagementProps) {
                   <tr key={u.id}>
                     <td>
                       <div className="flex items-center gap-3">
-                        <div className="w-10 h-10 rounded-full bg-[var(--color-canvas-parchment)] text-[var(--color-ink)] flex items-center justify-center body-strong">
-                          {u.name.charAt(0).toUpperCase()}
+                        <div className="w-10 h-10 rounded-full bg-[var(--color-canvas-parchment)] text-[var(--color-ink)] flex items-center justify-center body-strong overflow-hidden">
+                          {u.image ? (
+                            <img src={u.image} alt={u.name} className="h-full w-full object-cover" />
+                          ) : (
+                            u.name.charAt(0).toUpperCase()
+                          )}
                         </div>
                         <div>
                           <p className="body-strong text-[var(--color-ink)]">{u.name}</p>
@@ -307,8 +222,8 @@ export default function UserManagement({ token }: UserManagementProps) {
                         onClick={() => handleToggleStatus(u)}
                         className={`badge-status cursor-pointer transition-colors ${
                           u.status === 'inactive'
-                            ? 'bg-[#e60012]/10 text-[#e60012] hover:bg-[#e60012]/15'
-                            : 'bg-[#059669]/10 text-[#059669] hover:bg-[#059669]/15'
+                            ? 'bg-[var(--color-error)]/10 text-[var(--color-error)] hover:bg-[var(--color-error)]/15'
+                            : 'bg-[var(--color-link)]/10 text-[var(--color-link)] hover:bg-[var(--color-link)]/15'
                         }`}
                         title={u.status === 'inactive' ? 'Click to Activate' : 'Click to Disable'}
                       >
@@ -331,7 +246,7 @@ export default function UserManagement({ token }: UserManagementProps) {
                     <td>
                       <div className="flex items-center justify-end gap-1">
                         <button
-                          onClick={() => handleOpenEditModal(u)}
+                          onClick={() => onEditUser(u.id)}
                           className="p-2 rounded-full text-[var(--color-ink-muted-48)] hover:text-[var(--color-primary)] hover:bg-[var(--color-canvas-parchment)] transition-colors"
                           title="Edit User Info"
                           id={`btn-edit-user-${u.id}`}
@@ -344,7 +259,7 @@ export default function UserManagement({ token }: UserManagementProps) {
                             setDeleteConfirmName(u.name);
                             setDeleteError(null);
                           }}
-                          className="p-2 rounded-full text-[var(--color-ink-muted-48)] hover:text-[#e60012] hover:bg-[#e60012]/10 transition-colors"
+                          className="p-2 rounded-full text-[var(--color-ink-muted-48)] hover:text-[var(--color-error)] hover:bg-[var(--color-error)]/10 transition-colors"
                           title="Delete User Account"
                           id={`btn-delete-user-${u.id}`}
                         >
@@ -360,137 +275,13 @@ export default function UserManagement({ token }: UserManagementProps) {
         </div>
       )}
 
-      {/* Create / Edit Modal */}
-      {isModalOpen && (
-        <div className="modal-overlay" onClick={() => setIsModalOpen(false)}>
-          <div className="modal-content" style={{ maxWidth: 480 }} onClick={(e) => e.stopPropagation()}>
-            <div className="modal-header">
-              <h2 className="display-md text-[var(--color-ink)]" style={{ fontSize: 28 }}>
-                {modalMode === 'create' ? 'Add New User Account' : 'Edit User Account'}
-              </h2>
-              <button onClick={() => setIsModalOpen(false)} className="btn-icon-circular" style={{ width: 36, height: 36 }}>
-                <X className="w-4 h-4" />
-              </button>
-            </div>
-
-            <form onSubmit={handleSubmit} className="modal-body space-y-5">
-              {formError && (
-                <div className="flex items-start gap-2 p-3 border border-[#e60012] rounded-lg bg-[#e60012]/5">
-                  <AlertCircle className="w-5 h-5 text-[#e60012] flex-shrink-0 mt-0.5" />
-                  <span className="caption text-[#e60012]">{formError}</span>
-                </div>
-              )}
-
-              {formSuccess && (
-                <div className="flex items-start gap-2 p-3 border border-[#059669] rounded-lg bg-[#059669]/5">
-                  <CheckCircle className="w-5 h-5 text-[#059669] flex-shrink-0 mt-0.5" />
-                  <span className="caption text-[#059669]">{formSuccess}</span>
-                </div>
-              )}
-
-              <div>
-                <label className="label-field">Full Name</label>
-                <input
-                  type="text"
-                  required
-                  value={name}
-                  onChange={(e) => setName(e.target.value)}
-                  placeholder="e.g. Instructor Sarah"
-                  className="input-field"
-                />
-              </div>
-
-              <div>
-                <label className="label-field">Email Address</label>
-                <input
-                  type="email"
-                  required
-                  value={email}
-                  onChange={(e) => setEmail(e.target.value)}
-                  placeholder="instructor@example.com"
-                  className="input-field"
-                />
-              </div>
-
-              <div>
-                <label className="label-field flex items-center justify-between">
-                  <span>{modalMode === 'create' ? 'Temporary Password' : 'Reset Password'}</span>
-                  {modalMode === 'edit' && (
-                    <span className="fine-print text-[var(--color-ink-muted-48)] font-normal">
-                      Leave blank to keep current
-                    </span>
-                  )}
-                </label>
-                <div className="relative">
-                  <Key className="w-4 h-4 text-[var(--color-ink-muted-48)] absolute left-4 top-1/2 -translate-y-1/2" />
-                  <input
-                    type="password"
-                    required={modalMode === 'create'}
-                    minLength={6}
-                    value={password}
-                    onChange={(e) => setPassword(e.target.value)}
-                    placeholder={modalMode === 'create' ? 'At least 6 characters' : 'Enter new password to reset'}
-                    className="input-field pl-11"
-                  />
-                </div>
-              </div>
-
-              <div className="grid grid-cols-2 gap-4">
-                <div>
-                  <label className="label-field">User Role</label>
-                  <select
-                    value={role}
-                    onChange={(e) => setRole(e.target.value as UserRole)}
-                    className="select-field"
-                  >
-                    <option value={UserRole.INSTRUCTOR}>Instructor</option>
-                    <option value={UserRole.ADMIN}>Admin</option>
-                  </select>
-                </div>
-
-                <div>
-                  <label className="label-field">Account Status</label>
-                  <select
-                    value={status}
-                    onChange={(e) => setStatus(e.target.value as 'active' | 'inactive')}
-                    className="select-field"
-                  >
-                    <option value="active">Active</option>
-                    <option value="inactive">Inactive</option>
-                  </select>
-                </div>
-              </div>
-
-              <div className="flex gap-3 pt-4 border-t border-[var(--color-divider-soft)]">
-                <button type="button" onClick={() => setIsModalOpen(false)} className="btn-utility-sm flex-1" style={{ padding: '11px 22px', fontSize: 14 }}>
-                  Cancel
-                </button>
-                <button type="submit" disabled={submitting} className="btn-primary flex-1">
-                  {submitting ? (
-                    <span className="flex items-center justify-center gap-2">
-                      <div className="spinner border-white/20 border-t-white" />
-                      Saving...
-                    </span>
-                  ) : (
-                    <>
-                      <Shield className="w-4 h-4 mr-2" />
-                      Save Account
-                    </>
-                  )}
-                </button>
-              </div>
-            </form>
-          </div>
-        </div>
-      )}
-
       {/* Delete Confirmation Modal */}
       {deleteConfirmId && (
         <div className="modal-overlay" id="delete-user-modal" onClick={() => { setDeleteConfirmId(null); setDeleteConfirmName(''); }}>
           <div className="modal-content" style={{ maxWidth: 480 }} onClick={(e) => e.stopPropagation()}>
             <div className="modal-header">
               <h2 className="display-md text-[var(--color-ink)] flex items-center gap-2" style={{ fontSize: 28 }}>
-                <AlertCircle className="w-6 h-6 text-[#e60012]" />
+                <AlertCircle className="w-6 h-6 text-[var(--color-error)olor-error)]" />
                 Confirm Deletion
               </h2>
               <button
@@ -504,9 +295,9 @@ export default function UserManagement({ token }: UserManagementProps) {
 
             <div className="modal-body space-y-5">
               {deleteError && (
-                <div className="flex items-start gap-2 p-3 border border-[#e60012] rounded-lg bg-[#e60012]/5">
-                  <AlertCircle className="w-5 h-5 text-[#e60012] flex-shrink-0 mt-0.5" />
-                  <span className="caption text-[#e60012]">{deleteError}</span>
+                <div className="flex items-start gap-2 p-3 border border-[var(--color-error)] rounded-lg bg-[var(--color-error)]/5">
+                  <AlertCircle className="w-5 h-5 text-[var(--color-error)] flex-shrink-0 mt-0.5" />
+                  <span className="caption text-[var(--color-error)]">{deleteError}</span>
                 </div>
               )}
 
@@ -529,7 +320,7 @@ export default function UserManagement({ token }: UserManagementProps) {
                   type="button"
                   onClick={handleDeleteUser}
                   disabled={deleting}
-                  className="btn-danger flex-1"
+                  className="btn-dark-utility flex-1"
                   id="btn-confirm-delete-user"
                 >
                   {deleting ? (

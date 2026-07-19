@@ -60,30 +60,30 @@ export default function Login({ onLoginSuccess }: LoginProps) {
   };
 
   return (
-    <div className="flex min-h-screen items-center justify-center bg-[var(--color-canvas-parchment)] px-4 py-10">
+    <div className="flex min-h-screen items-center justify-center bg-[var(--color-canvas)] px-4 py-10">
       <div className="page-shell w-full max-w-6xl overflow-hidden">
         <div className="grid lg:grid-cols-[1.05fr_0.95fr]">
-          <div className="bg-[var(--color-surface-black)] p-8 text-[var(--color-on-dark)] sm:p-10 lg:p-12">
-            <p className="pill-chip bg-white/10 text-white">Karate dojo portal</p>
-            <h1 className="display-lg mt-5 text-[var(--color-on-dark)]">A calmer way to run a busy dojo.</h1>
-            <p className="lead mt-4 text-[var(--color-body-muted)]" style={{ fontSize: 21 }}>
+          <div className="bg-[var(--color-canvas-elevated)] border-r border-[var(--color-hairline)] p-8 text-[var(--color-ink)] sm:p-10 lg:p-12">
+            <p className="pill-chip">Karate dojo portal</p>
+            <h1 className="display-lg mt-5 text-[var(--color-ink)]">A calmer way to run a busy dojo.</h1>
+            <p className="lead mt-4 text-[var(--color-body)]">
               Set the tone with a focused workspace for admissions, attendance, promotions, and security.
             </p>
-            <div className="mt-8 space-y-3 text-[var(--color-body-muted)]">
-              <div className="rounded-2xl border border-white/10 bg-white/5 px-4 py-3">Student records kept tidy and easy to review.</div>
-              <div className="rounded-2xl border border-white/10 bg-white/5 px-4 py-3">Daily attendance that stays quick enough for real classes.</div>
-              <div className="rounded-2xl border border-white/10 bg-white/5 px-4 py-3">Leadership tools for instructors and admins in one place.</div>
+            <div className="mt-8 space-y-3 text-[var(--color-body)]">
+              <div className="rounded-lg border border-[var(--color-hairline)] bg-[var(--color-canvas)] px-4 py-3">Student records kept tidy and easy to review.</div>
+              <div className="rounded-lg border border-[var(--color-hairline)] bg-[var(--color-canvas)] px-4 py-3">Daily attendance that stays quick enough for real classes.</div>
+              <div className="rounded-lg border border-[var(--color-hairline)] bg-[var(--color-canvas)] px-4 py-3">Leadership tools for instructors and admins in one place.</div>
             </div>
           </div>
 
-          <div className="bg-[var(--color-canvas)] p-8 sm:p-10 lg:p-12">
+          <div className="bg-[var(--color-canvas-elevated)] p-8 sm:p-10 lg:p-12">
             <h2 className="display-md mb-2 text-[var(--color-ink)]" style={{ fontSize: 28 }}>
               Sign In
             </h2>
-            <p className="body-strong mb-6 text-[var(--color-ink-muted-48)]">Access your dojo management dashboard</p>
+            <p className="body-strong mb-6 text-[var(--color-mute)]">Access your dojo management dashboard</p>
 
             {error && (
-              <div className="mb-6 flex items-start gap-2 rounded-lg border border-[#e60012] bg-[#e60012]/5 p-3 text-[#e60012]">
+              <div className="mb-6 flex items-start gap-2 rounded-lg border border-[var(--color-error)] bg-[var(--color-error)]/5 p-3 text-[var(--color-error)]">
                 <AlertCircle className="mt-0.5 h-5 w-5 flex-shrink-0" />
                 <span className="body-strong">{error}</span>
               </div>

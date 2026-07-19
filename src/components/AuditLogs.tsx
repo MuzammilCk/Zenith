@@ -63,9 +63,9 @@ export default function AuditLogs({ token }: AuditLogsProps) {
   };
 
   const getActionStyle = (action: string) => {
-    if (action.includes('DELETE')) return 'bg-[#e60012]/10 text-[#e60012]';
-    if (action.includes('CREATE') || action.includes('PROMOTE')) return 'bg-[#059669]/10 text-[#059669]';
-    if (action.includes('UPDATE')) return 'bg-[#0071e3]/10 text-[var(--color-primary)]';
+    if (action.includes('DELETE')) return 'bg-[var(--color-error)]/10 text-[var(--color-error)]';
+    if (action.includes('CREATE') || action.includes('PROMOTE')) return 'bg-[var(--color-link)]/10 text-[var(--color-link)]';
+    if (action.includes('UPDATE')) return 'bg-[var(--color-link)]/10 text-[var(--color-link)]';
     return 'bg-[var(--color-canvas-parchment)] text-[var(--color-ink-muted-80)]';
   };
 

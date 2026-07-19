@@ -9,9 +9,11 @@ import Login from './components/Login.js';
 import Dashboard from './components/Dashboard.js';
 import StudentList from './components/StudentList.js';
 import StudentDetail from './components/StudentDetail.js';
+import StudentEnrollment from './components/StudentEnrollment.js';
 import AttendanceMarker from './components/AttendanceMarker.js';
 import AuditLogs from './components/AuditLogs.js';
 import UserManagement from './components/UserManagement.js';
+import UserEnrollment from './components/UserEnrollment.js';
 import { UserRole } from './types.js';
 
 export default function App() {
@@ -25,6 +27,8 @@ export default function App() {
 
   const [currentTab, setCurrentTab] = useState('dashboard');
   const [activeStudentId, setActiveStudentId] = useState<string | null>(null);
+  const [editStudentId, setEditStudentId] = useState<string | null>(null);
+  const [editUserId, setEditUserId] = useState<string | null>(null);
   const [sessionLoading, setSessionLoading] = useState(true);
 
   // Authenticate from local storage session on initial mount
@@ -130,16 +134,43 @@ export default function App() {
             token={token}
             userRole={currentUser.role}
             onViewStudent={(id) => setActiveStudentId(id)}
+            onEnroll={() => setCurrentTab('enrollment')}
+            onEditStudent={(id) => {
+              setEditStudentId(id);
+              setCurrentTab('enrollment');
+            }}
           />
         );
       }
+      break;
+    case 'enrollment':
+      content = (
+        <StudentEnrollment
+          token={token}
+          studentToEdit={editStudentId ? { id: editStudentId } as any : null}
+          onDone={() => {
+            setEditStudentId(null);
+            setCurrentTab('students');
+          }}
+          onSaved={() => {}}
+        />
+      );
       break;
     case 'attendance':
       content = <AttendanceMarker token={token} userRole={currentUser.role} />;
       break;
     case 'users':
       if (currentUser.role === UserRole.ADMIN) {
-        content = <UserManagement token={token} />;
+        content = (
+          <UserManagement
+            token={token}
+            onAddUser={() => setCurrentTab('user-enrollment')}
+            onEditUser={(id) => {
+              setEditUserId(id);
+              setCurrentTab('user-enrollment');
+            }}
+          />
+        );
       } else {
         content = (
           <div className="card-utility text-center space-y-4">
@@ -150,6 +181,19 @@ export default function App() {
           </div>
         );
       }
+      break;
+    case 'user-enrollment':
+      content = (
+        <UserEnrollment
+          token={token}
+          userToEdit={editUserId ? { id: editUserId } : null}
+          onDone={() => {
+            setEditUserId(null);
+            setCurrentTab('users');
+          }}
+          onSaved={() => {}}
+        />
+      );
       break;
     case 'audit-logs':
       if (currentUser.role === UserRole.ADMIN) {
@@ -176,6 +220,12 @@ export default function App() {
         // Clear sub-page state when changing tabs
         if (tab !== 'students') {
           setActiveStudentId(null);
+        }
+        if (tab !== 'enrollment') {
+          setEditStudentId(null);
+        }
+        if (tab !== 'user-enrollment') {
+          setEditUserId(null);
         }
         setCurrentTab(tab);
       }}

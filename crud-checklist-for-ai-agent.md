@@ -8,15 +8,17 @@
 
 1. **Two layers.** Layer 1 is the numbered checklist below — a structural quality bar, the same regardless of domain. Layer 2 is domain-specific and lives in the worksheet after Section 0. Completing Layer 1 does not mean the build is correct; both layers matter.
 
-2. **Do not invent domain specifics.** If the user hasn't already told you the project's domain, stakes, or constraints, ask before proceeding. A plausible-sounding guess is worse than no answer, because every downstream check inherits the error.
+2. **Check for `project_context.md` first.** Before asking the user anything, look for a file named `project_context.md` in the project. If it exists, load it and treat its answers as authoritative for Section 0 and Section 0.5 — do not re-ask what it already answers. If a field is blank, marked TODO, or its "Last confirmed" date looks stale relative to what's being discussed now, ask the user about that specific field only, then write their answer back into the file. If `project_context.md` doesn't exist, ask the Section 0/0.5 questions directly, then offer to create it from the answers so future sessions don't have to ask again.
 
-3. **Evidence, not vibes.** For every item you report as satisfied, point to the specific file, function, test, or observed behavior that proves it. If you can't, report it as not satisfied — code that resembles a solution is not the same as a working one.
+3. **Do not invent domain specifics.** Whether the answer comes from the user directly or from `project_context.md`, it must trace back to something the user actually confirmed — never a guess. A plausible-sounding guess is worse than no answer, because every downstream check inherits the error.
 
-4. **No silent skips.** If an item doesn't apply, say why. If something isn't implemented, say so plainly in your report.
+4. **Evidence, not vibes.** For every item you report as satisfied, point to the specific file, function, test, or observed behavior that proves it. If you can't, report it as not satisfied — code that resembles a solution is not the same as a working one.
 
-5. **Audit yourself before declaring done.** Once the build is functionally complete, run this entire document against your own work and report results as a table: item — status (done / partial / not applicable) — evidence. A summary claim with no table behind it does not satisfy this document.
+5. **No silent skips.** If an item doesn't apply, say why. If something isn't implemented, say so plainly in your report.
 
-6. **Section 15 applies to you.** AI-generated code is exactly the kind of code most likely to look complete without being complete. Treat that section as a check on your own output, not a description of a hypothetical bad actor.
+6. **Audit yourself before declaring done.** Once the build is functionally complete, run this entire document against your own work and report results as a table: item — status (done / partial / not applicable) — evidence. A summary claim with no table behind it does not satisfy this document.
+
+7. **Section 15 applies to you.** AI-generated code is exactly the kind of code most likely to look complete without being complete. Treat that section as a check on your own output, not a description of a hypothetical bad actor.
 
 ---
 
@@ -32,7 +34,7 @@ A build can satisfy every item in Layer 1 and still be the wrong system for the 
 
 ## 0) Confirm the roles
 
-Do not default to generic "user and admin." Identify this project's actual roles — ask the user if they haven't been specified yet.
+Do not default to generic "user and admin." Pull the roles from `project_context.md` if it exists and has them filled in. Otherwise, ask the user — then write the answer back into `project_context.md`.
 
 Roles for this project:
 - Role 1: _______________
@@ -46,7 +48,7 @@ Every "Per-role" line below means: check it once per role listed here, not once 
 
 ## 0.5) Domain worksheet — required before Section 1
 
-Answer using information the user has already given you. If anything isn't established, ask before proceeding.
+Pull these answers from `project_context.md` if present. For anything blank or missing there, ask the user before proceeding — then write the answer back into `project_context.md` so it isn't asked again next session.
 
 1. **Highest-stakes mistake this app could make?** Determines which sections below matter most.
 2. **What has to keep working under bad conditions?** (offline/low-bandwidth, high concurrency, strict latency — whichever applies)

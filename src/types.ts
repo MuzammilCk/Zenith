@@ -19,6 +19,7 @@ export interface User {
   createdAt: string;
   updatedAt?: string;
   lastLogin?: string;
+  image?: string; // base64 data URL of the account avatar
 }
 
 export enum BeltRank {
@@ -56,6 +57,11 @@ export interface Student {
   batchId: string; // foreign key to Batch
   joinedDate: string;
   notes?: string;
+  image?: string; // base64 data URL of the student portrait
+  address?: string;
+  emergencyContactName?: string;
+  emergencyContactPhone?: string;
+  medicalNotes?: string;
   createdAt: string;
 }
 

@@ -109,9 +109,13 @@ export default function StudentDetail({ token, studentId, onBack }: StudentDetai
       {/* Hero Header Card */}
       <div className="card-utility flex flex-col md:flex-row justify-between items-start md:items-center gap-6">
         <div className="flex items-center gap-5">
-          <div className="w-20 h-20 rounded-full bg-[var(--color-canvas-parchment)] text-[var(--color-ink)] flex items-center justify-center product-shadow"
+          <div className="w-20 h-20 rounded-full bg-[var(--color-canvas-parchment)] text-[var(--color-ink)] flex items-center justify-center overflow-hidden"
                style={{ fontSize: 36, fontWeight: 600, fontFamily: 'var(--font-display)' }}>
-            {student.name.charAt(0)}
+            {student.image ? (
+              <img src={student.image} alt={student.name} className="h-full w-full object-cover" />
+            ) : (
+              student.name.charAt(0)
+            )}
           </div>
           <div>
             <h1 className="display-lg text-[var(--color-ink)]" id="student-detail-name" style={{ fontSize: 40 }}>{student.name}</h1>
@@ -122,7 +126,7 @@ export default function StudentDetail({ token, studentId, onBack }: StudentDetai
               </span>
               <span className={`badge-status ${
                 student.status === StudentStatus.ACTIVE
-                  ? 'bg-[#059669]/10 text-[#059669]'
+                  ? 'bg-[var(--color-link)]/10 text-[var(--color-link)]'
                   : 'bg-[var(--color-canvas-parchment)] text-[var(--color-ink-muted-48)]'
               }`}>
                 {student.status}
@@ -179,6 +183,18 @@ export default function StudentDetail({ token, studentId, onBack }: StudentDetai
                 <Activity className="w-4 h-4 text-[var(--color-ink-muted-48)] flex-shrink-0" />
                 <span>Gender: <span className="body-strong capitalize">{student.gender}</span></span>
               </div>
+              {student.address && (
+                <div className="flex items-center gap-2 text-[var(--color-ink)]">
+                  <User className="w-4 h-4 text-[var(--color-ink-muted-48)] flex-shrink-0" />
+                  <span className="truncate">{student.address}</span>
+                </div>
+              )}
+              {student.emergencyContactName && (
+                <div className="flex items-center gap-2 text-[var(--color-ink)]">
+                  <Phone className="w-4 h-4 text-[var(--color-ink-muted-48)] flex-shrink-0" />
+                  <span>Emergency: <span className="body-strong">{student.emergencyContactName}</span> {student.emergencyContactPhone && <span className="caption text-[var(--color-ink-muted-48)]">{student.emergencyContactPhone}</span>}</span>
+                </div>
+              )}
             </div>
 
             {student.notes && (
@@ -205,9 +221,9 @@ export default function StudentDetail({ token, studentId, onBack }: StudentDetai
             ) : (
               <div className="space-y-4">
                 {[
-                  { label: 'Present', count: presentCount, color: 'bg-[#4ade80]', textColor: 'text-[#059669]' },
-                  { label: 'Tardy', count: tardyCount, color: 'bg-[#60a5fa]', textColor: 'text-[#1d4ed8]' },
-                  { label: 'Absent', count: absentCount, color: 'bg-[#f87171]', textColor: 'text-[#e60012]' },
+                  { label: 'Present', count: presentCount, color: 'bg-[var(--color-link)]', textColor: 'text-[var(--color-link)]' },
+                  { label: 'Tardy', count: tardyCount, color: 'bg-[var(--color-warning)]', textColor: 'text-[var(--color-warning-deep)]' },
+                  { label: 'Absent', count: absentCount, color: 'bg-[var(--color-error)]', textColor: 'text-[var(--color-error)]' },
                 ].map((row) => (
                   <div key={row.label} className="space-y-1.5">
                     <div className="flex items-center justify-between caption">
@@ -291,9 +307,9 @@ export default function StudentDetail({ token, studentId, onBack }: StudentDetai
                       .sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime())
                       .map((record) => {
                         let statusStyle = 'bg-[var(--color-canvas-parchment)] text-[var(--color-ink)]';
-                        if (record.status === 'present') statusStyle = 'bg-[#4ade80]/15 text-[#059669]';
-                        else if (record.status === 'tardy') statusStyle = 'bg-[#60a5fa]/15 text-[#1d4ed8]';
-                        else if (record.status === 'absent') statusStyle = 'bg-[#f87171]/15 text-[#e60012]';
+                        if (record.status === 'present') statusStyle = 'bg-[var(--color-link)]/15 text-[var(--color-link)]';
+                        else if (record.status === 'tardy') statusStyle = 'bg-[var(--color-warning)]/15 text-[var(--color-warning-deep)]';
+                        else if (record.status === 'absent') statusStyle = 'bg-[var(--color-error)]/15 text-[var(--color-error)]';
 
                         return (
                           <tr key={record.id}>

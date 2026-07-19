@@ -95,14 +95,14 @@ export default function BeltPromoter({ token, student, onClose, onSuccess }: Bel
 
         <form onSubmit={handleSubmit} className="modal-body space-y-5" id="belt-promotion-form">
           {error && (
-            <div className="flex items-start gap-2 p-3 border border-[#e60012] rounded-lg bg-[#e60012]/5" id="promoter-error">
-              <AlertCircle className="w-5 h-5 text-[#e60012] flex-shrink-0 mt-0.5" />
-              <span className="caption text-[#e60012]">{error}</span>
+            <div className="flex items-start gap-2 p-3 border border-[var(--color-error)] rounded-lg bg-[var(--color-error)]/5" id="promoter-error">
+              <AlertCircle className="w-5 h-5 text-[var(--color-error)] flex-shrink-0 mt-0.5" />
+              <span className="caption text-[var(--color-error)]">{error}</span>
             </div>
           )}
 
           {/* Student current → target display */}
-          <div className="bg-[var(--color-canvas-parchment)] rounded-xl p-5 text-center space-y-2">
+          <div className="bg-[var(--color-canvas-parchment)] rounded-lg p-5 text-center space-y-2">
             <p className="caption-strong text-[var(--color-ink-muted-48)]">Promoting Student</p>
             <p className="body-strong text-[var(--color-ink)]" style={{ fontSize: 19 }}>{student.name}</p>
             <div className="flex items-center justify-center gap-3">
