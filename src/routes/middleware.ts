@@ -12,6 +12,7 @@ export interface AuthenticatedRequest extends Request {
   user?: {
     id: string;
     role: UserRole;
+    assignedBatchIds?: string[];
   };
 }
 

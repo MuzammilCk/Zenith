@@ -16,7 +16,7 @@ import {
   RefreshCw,
   X,
 } from 'lucide-react';
-import { UserRole } from '../types.js';
+import { UserRole, Batch } from '../types.js';
 
 interface UserManagementProps {
   token: string;
@@ -31,6 +31,7 @@ interface ManagedUser {
   image?: string;
   role: UserRole;
   status: 'active' | 'inactive';
+  assignedBatchIds?: string[];
   createdBy?: string;
   createdAt: string;
   updatedAt?: string;
@@ -38,6 +39,7 @@ interface ManagedUser {
 
 export default function UserManagement({ token, onAddUser, onEditUser }: UserManagementProps) {
   const [users, setUsers] = useState<ManagedUser[]>([]);
+  const [batches, setBatches] = useState<Batch[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [searchQuery, setSearchQuery] = useState('');
@@ -68,6 +70,16 @@ export default function UserManagement({ token, onAddUser, onEditUser }: UserMan
 
   useEffect(() => {
     fetchUsers();
+    (async () => {
+      try {
+        const res = await fetch('/api/batches', {
+          headers: { Authorization: `Bearer ${token}` },
+        });
+        if (res.ok) setBatches(await res.json());
+      } catch (err) {
+        console.error('Error loading batches:', err);
+      }
+    })();
   }, [token]);
 
   const handleToggleStatus = async (user: ManagedUser) => {
@@ -185,6 +197,7 @@ export default function UserManagement({ token, onAddUser, onEditUser }: UserMan
                 <tr>
                   <th>Name & Email</th>
                   <th>Role</th>
+                  <th>Assigned Classes</th>
                   <th>Status</th>
                   <th>Created</th>
                   <th className="text-right">Actions</th>
@@ -216,6 +229,17 @@ export default function UserManagement({ token, onAddUser, onEditUser }: UserMan
                       }`}>
                         {u.role}
                       </span>
+                    </td>
+                    <td className="caption text-[var(--color-ink-muted-48)]">
+                      {u.role === UserRole.ADMIN ? (
+                        <span className="text-[var(--color-ink-muted-48)]">All classes</span>
+                      ) : (u.assignedBatchIds ?? []).length === 0 ? (
+                        <span className="text-[var(--color-error)]">None assigned</span>
+                      ) : (
+                        (u.assignedBatchIds ?? [])
+                          .map((id) => batches.find((b) => b.id === id)?.name ?? id)
+                          .join(', ')
+                      )}
                     </td>
                     <td>
                       <button

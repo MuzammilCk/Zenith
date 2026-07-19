@@ -15,7 +15,7 @@ import {
   X,
   Camera,
 } from 'lucide-react';
-import { UserRole } from '../types.js';
+import { UserRole, Batch } from '../types.js';
 
 // Resize + compress an image file to a compact base64 data URL so it can live
 // comfortably inside the JSON file database.
@@ -63,6 +63,7 @@ interface ManagedUser {
   role: UserRole;
   status: 'active' | 'inactive';
   image?: string;
+  assignedBatchIds?: string[];
 }
 
 export default function UserEnrollment({
@@ -79,6 +80,8 @@ export default function UserEnrollment({
   const [role, setRole] = useState<UserRole>(UserRole.INSTRUCTOR);
   const [status, setStatus] = useState<'active' | 'inactive'>('active');
   const [image, setImage] = useState<string | undefined>(undefined);
+  const [batches, setBatches] = useState<Batch[]>([]);
+  const [assignedBatchIds, setAssignedBatchIds] = useState<string[]>([]);
 
   const [errors, setErrors] = useState<Record<string, string>>({});
   const [formError, setFormError] = useState<string | null>(null);
@@ -86,6 +89,21 @@ export default function UserEnrollment({
   const [saved, setSaved] = useState(false);
 
   const fileInputRef = useRef<HTMLInputElement>(null);
+
+  useEffect(() => {
+    (async () => {
+      try {
+        const response = await fetch('/api/batches', {
+          headers: { Authorization: `Bearer ${token}` },
+        });
+        if (response.ok) {
+          setBatches(await response.json());
+        }
+      } catch (err) {
+        console.error('Error loading batches:', err);
+      }
+    })();
+  }, [token]);
 
   useEffect(() => {
     if (!userToEdit) return;
@@ -101,6 +119,7 @@ export default function UserEnrollment({
           setRole(u.role);
           setStatus(u.status || 'active');
           setImage(u.image);
+          setAssignedBatchIds(u.assignedBatchIds ?? []);
         }
       } catch (err) {
         console.error('Error loading user for edit:', err);
@@ -153,6 +172,8 @@ export default function UserEnrollment({
         role,
         status,
         image: image ?? '',
+        // Instructors are scoped to assigned batches; admins see everything.
+        assignedBatchIds: role === UserRole.ADMIN ? [] : assignedBatchIds,
       };
       if (!isEdit || password) {
         payload.password = password;
@@ -376,6 +397,48 @@ export default function UserEnrollment({
                 </select>
               </div>
             </div>
+
+            {role === UserRole.INSTRUCTOR && (
+              <div className="mt-5">
+                <label className="label-field">Assigned Classes</label>
+                <p className="caption mb-3 text-[var(--color-ink-muted-48)]">
+                  This instructor will only see students and attendance for the classes you select here.
+                </p>
+                <div className="grid grid-cols-1 gap-2 sm:grid-cols-2">
+                  {batches.map((b) => {
+                    const checked = assignedBatchIds.includes(b.id);
+                    return (
+                      <label
+                        key={b.id}
+                        className={`flex cursor-pointer items-start gap-3 rounded-lg border p-3 transition-colors ${
+                          checked
+                            ? 'border-[var(--color-primary)] bg-[var(--color-primary)]/5'
+                            : 'border-[var(--color-hairline)] hover:bg-[var(--color-canvas-parchment)]'
+                        }`}
+                      >
+                        <input
+                          type="checkbox"
+                          className="mt-0.5 h-4 w-4 accent-[var(--color-primary)]"
+                          checked={checked}
+                          onChange={(e) => {
+                            setAssignedBatchIds((prev) =>
+                              e.target.checked
+                                ? [...prev, b.id]
+                                : prev.filter((id) => id !== b.id)
+                            );
+                          }}
+                          id={`assign-batch-${b.id}`}
+                        />
+                        <span>
+                          <span className="body-strong block text-[var(--color-ink)]">{b.name}</span>
+                          <span className="caption text-[var(--color-ink-muted-48)]">{b.schedule}</span>
+                        </span>
+                      </label>
+                    );
+                  })}
+                </div>
+              </div>
+            )}
           </section>
 
           {/* Actions */}

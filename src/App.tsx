@@ -23,6 +23,7 @@ export default function App() {
     name: string;
     email: string;
     role: UserRole;
+    assignedBatchIds?: string[];
   } | null>(null);
 
   const [currentTab, setCurrentTab] = useState('dashboard');
@@ -73,7 +74,7 @@ export default function App() {
 
   const handleLoginSuccess = (
     authToken: string,
-    user: { id: string; name: string; email: string; role: any }
+    user: { id: string; name: string; email: string; role: any; assignedBatchIds?: string[] }
   ) => {
     setToken(authToken);
     setCurrentUser(user);
@@ -153,11 +154,13 @@ export default function App() {
             setCurrentTab('students');
           }}
           onSaved={() => {}}
+          currentUserRole={currentUser.role}
+          assignedBatchIds={currentUser.assignedBatchIds}
         />
       );
       break;
     case 'attendance':
-      content = <AttendanceMarker token={token} userRole={currentUser.role} />;
+      content = <AttendanceMarker token={token} userRole={currentUser.role} assignedBatchIds={currentUser.assignedBatchIds} />;
       break;
     case 'users':
       if (currentUser.role === UserRole.ADMIN) {

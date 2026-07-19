@@ -39,7 +39,7 @@
       "updatedAt": "2026-07-19T06:42:38.954Z"
     },
     {
-      "status": "inactive",
+      "status": "active",
       "name": "Third Tester",
       "email": "third.tester@example.com",
       "passwordHash": "fcf730b6d95236ecd3c9fc2d92d7b6b2bb061514961aec041d6c7a7192f592e4",
@@ -47,7 +47,8 @@
       "createdBy": "u-1",
       "id": "u-1784443941720-550",
       "createdAt": "2026-07-19T06:52:21.720Z",
-      "updatedAt": "2026-07-19T06:53:04.095Z"
+      "updatedAt": "2026-07-19T08:42:50.194Z",
+      "image": ""
     },
     {
       "status": "active",
@@ -369,6 +370,27 @@
       "action": "USER_LOGIN",
       "details": "User Admin Sensei logged in successfully.",
       "createdAt": "2026-07-19T07:50:14.784Z"
+    },
+    {
+      "id": "log-1784450556350-889",
+      "userId": "u-1",
+      "action": "USER_LOGIN",
+      "details": "User Admin Sensei logged in successfully.",
+      "createdAt": "2026-07-19T08:42:36.350Z"
+    },
+    {
+      "id": "log-1784450570195-368",
+      "userId": "u-1",
+      "action": "UPDATE_USER",
+      "details": "Updated user account details for Third Tester.",
+      "createdAt": "2026-07-19T08:42:50.195Z"
+    },
+    {
+      "id": "log-1784450605350-234",
+      "userId": "u-1784403822552-858",
+      "action": "USER_LOGIN",
+      "details": "User Instructor Ken logged in successfully.",
+      "createdAt": "2026-07-19T08:43:25.350Z"
     }
   ]
 }

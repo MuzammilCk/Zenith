@@ -7,7 +7,7 @@ import { Router, Response } from 'express';
 import { db } from '../db/database.js';
 import { authService, hashPassword } from '../services/authService.js';
 import { authenticate, requireRole, AuthenticatedRequest } from './middleware.js';
-import { UserRole, BeltRank, StudentStatus, AttendanceStatus } from '../types.js';
+import { UserRole, BeltRank, StudentStatus, AttendanceStatus, Student } from '../types.js';
 
 export const apiRouter = Router();
 
@@ -61,6 +61,7 @@ apiRouter.get('/auth/me', authenticate as any, (req: AuthenticatedRequest, res) 
     name: user.name,
     email: user.email,
     role: user.role,
+    assignedBatchIds: user.assignedBatchIds ?? [],
   });
 });
 
@@ -89,7 +90,7 @@ apiRouter.get('/users/:id', [authenticate as any, requireRole([UserRole.ADMIN]) 
 
 // POST /api/users
 apiRouter.post('/users', [authenticate as any, requireRole([UserRole.ADMIN]) as any], (req: AuthenticatedRequest, res: Response) => {
-  const { name, email, password, role, status, image } = req.body;
+  const { name, email, password, role, status, image, assignedBatchIds } = req.body;
 
   if (!name || name.trim().length < 2) {
     res.status(400).json({ error: 'Name is required.' });
@@ -108,6 +109,23 @@ apiRouter.post('/users', [authenticate as any, requireRole([UserRole.ADMIN]) as 
     return;
   }
 
+  // Validate assignedBatchIds when provided.
+  const resolvedRole = role || UserRole.INSTRUCTOR;
+  let resolvedAssigned: string[] | undefined;
+  if (assignedBatchIds !== undefined) {
+    if (!Array.isArray(assignedBatchIds) || assignedBatchIds.some((id: any) => typeof id !== 'string')) {
+      res.status(400).json({ error: 'assignedBatchIds must be an array of batch IDs.' });
+      return;
+    }
+    const unknown = assignedBatchIds.filter((id: string) => !db.getBatchById(id));
+    if (unknown.length > 0) {
+      res.status(400).json({ error: `Unknown batch ID(s): ${unknown.join(', ')}.` });
+      return;
+    }
+    // Only instructors are scoped by assignment; admins see everything.
+    resolvedAssigned = resolvedRole === UserRole.INSTRUCTOR ? assignedBatchIds : [];
+  }
+
   const existing = db.getUserByEmail(email);
   if (existing) {
     res.status(400).json({ error: 'A user with this email already exists.' });
@@ -118,10 +136,11 @@ apiRouter.post('/users', [authenticate as any, requireRole([UserRole.ADMIN]) as 
     name: name.trim(),
     email: email.toLowerCase().trim(),
     passwordHash: hashPassword(password),
-    role: role || UserRole.INSTRUCTOR,
+    role: resolvedRole,
     status: status || 'active',
     createdBy: req.user!.id,
     image: typeof image === 'string' ? image : undefined,
+    ...(resolvedAssigned !== undefined && { assignedBatchIds: resolvedAssigned }),
   });
 
   db.createAuditLog(req.user!.id, 'CREATE_USER', `Created user account for ${newUser.name} (${newUser.role}).`);
@@ -138,7 +157,7 @@ apiRouter.put('/users/:id', [authenticate as any, requireRole([UserRole.ADMIN]) 
     return;
   }
 
-  const { name, email, password, role, status, image } = req.body;
+  const { name, email, password, role, status, image, assignedBatchIds } = req.body;
   const updates: any = {};
 
   if (name !== undefined) {
@@ -202,6 +221,20 @@ apiRouter.put('/users/:id', [authenticate as any, requireRole([UserRole.ADMIN]) 
     updates.image = image;
   }
 
+  if (assignedBatchIds !== undefined) {
+    if (!Array.isArray(assignedBatchIds) || assignedBatchIds.some((id: any) => typeof id !== 'string')) {
+      res.status(400).json({ error: 'assignedBatchIds must be an array of batch IDs.' });
+      return;
+    }
+    const unknown = assignedBatchIds.filter((id: string) => !db.getBatchById(id));
+    if (unknown.length > 0) {
+      res.status(400).json({ error: `Unknown batch ID(s): ${unknown.join(', ')}.` });
+      return;
+    }
+    // Only instructors are scoped by assignment; admins see everything.
+    updates.assignedBatchIds = role === UserRole.ADMIN ? [] : assignedBatchIds;
+  }
+
   const updatedUser = db.updateUser(req.params.id, updates);
   if (!updatedUser) {
     res.status(500).json({ error: 'Failed to update user.' });
@@ -261,8 +294,15 @@ apiRouter.post('/batches', [authenticate as any, requireRole([UserRole.ADMIN]) a
 // --- Students Endpoints ---
 
 // GET /api/students (Search, Filter, Sort, Pagination)
-apiRouter.get('/students', authenticate as any, (req, res) => {
-  let students = db.getStudents();
+// Scoped by role: instructors only see students in batches the admin assigned them.
+apiRouter.get('/students', authenticate as any, (req: AuthenticatedRequest, res: Response) => {
+  let students: Student[];
+  if (req.user!.role === UserRole.ADMIN) {
+    students = db.getStudents();
+  } else {
+    const assigned = req.user!.assignedBatchIds ?? [];
+    students = db.getStudentsInBatches(assigned);
+  }
 
   // 1. Search (name, email, phone)
   const query = req.query.q ? (req.query.q as string).toLowerCase().trim() : '';
@@ -338,11 +378,21 @@ apiRouter.get('/students', authenticate as any, (req, res) => {
 });
 
 // GET /api/students/:id (Detailed Profile, History)
-apiRouter.get('/students/:id', authenticate as any, (req, res) => {
+// Scoped by role: instructors may only view students in their assigned batches.
+apiRouter.get('/students/:id', authenticate as any, (req: AuthenticatedRequest, res: Response) => {
   const student = db.getStudentById(req.params.id);
   if (!student) {
     res.status(404).json({ error: 'Student not found.' });
     return;
+  }
+
+  // Instructors are restricted to students in their assigned batches.
+  if (req.user!.role !== UserRole.ADMIN) {
+    const assigned = req.user!.assignedBatchIds ?? [];
+    if (!assigned.includes(student.batchId)) {
+      res.status(403).json({ error: 'Access denied. This student is not in one of your assigned classes.' });
+      return;
+    }
   }
 
   const batch = db.getBatchById(student.batchId);
@@ -565,10 +615,18 @@ apiRouter.delete('/students/:id', [authenticate as any, requireRole([UserRole.AD
 // --- Attendance Endpoints ---
 
 // GET /api/attendance?date=YYYY-MM-DD&batchId=...
-apiRouter.get('/attendance', authenticate as any, (req, res) => {
+// Scoped by role: instructors only see attendance for their assigned batches.
+apiRouter.get('/attendance', authenticate as any, (req: AuthenticatedRequest, res: Response) => {
   const { date, batchId, session } = req.query;
 
   let records = db.getAttendanceRecords();
+
+  // Instructors are restricted to their assigned batches unless they explicitly
+  // filter to one of them.
+  if (req.user!.role !== UserRole.ADMIN) {
+    const assigned = req.user!.assignedBatchIds ?? [];
+    records = records.filter((r) => assigned.includes(r.batchId));
+  }
 
   if (date) {
     records = records.filter((r) => r.date === date);
@@ -596,6 +654,16 @@ apiRouter.post('/attendance', authenticate as any, (req: AuthenticatedRequest, r
     res.status(400).json({ error: 'A valid batch assignment is required.' });
     return;
   }
+
+  // Instructors may only mark attendance for batches the admin assigned them.
+  if (req.user!.role !== UserRole.ADMIN) {
+    const assigned = req.user!.assignedBatchIds ?? [];
+    if (!assigned.includes(batchId)) {
+      res.status(403).json({ error: 'Access denied. You can only mark attendance for your assigned classes.' });
+      return;
+    }
+  }
+
   if (!session || session.trim().length === 0) {
     res.status(400).json({ error: 'Session description is required.' });
     return;
@@ -641,11 +709,20 @@ apiRouter.post('/attendance', authenticate as any, (req: AuthenticatedRequest, r
 // --- Belt & Promotions Endpoints ---
 
 // GET /api/belt-history/:studentId
-apiRouter.get('/belt-history/:studentId', authenticate as any, (req, res) => {
+apiRouter.get('/belt-history/:studentId', authenticate as any, (req: AuthenticatedRequest, res: Response) => {
   const student = db.getStudentById(req.params.studentId);
   if (!student) {
     res.status(404).json({ error: 'Student not found.' });
     return;
+  }
+
+  // Instructors are restricted to students in their assigned batches.
+  if (req.user!.role !== UserRole.ADMIN) {
+    const assigned = req.user!.assignedBatchIds ?? [];
+    if (!assigned.includes(student.batchId)) {
+      res.status(403).json({ error: 'Access denied. This student is not in one of your assigned classes.' });
+      return;
+    }
   }
 
   const history = db.getBeltHistoryForStudent(student.id);
@@ -717,11 +794,17 @@ apiRouter.post('/students/:id/promote', [authenticate as any, requireRole([UserR
 // --- Dashboard Statistics Endpoints ---
 
 // GET /api/dashboard/stats
-apiRouter.get('/dashboard/stats', authenticate as any, (req, res) => {
-  const students = db.getStudents();
+// Scoped by role: instructors only see stats for their assigned batches.
+apiRouter.get('/dashboard/stats', authenticate as any, (req: AuthenticatedRequest, res: Response) => {
+  const assigned = req.user!.role === UserRole.ADMIN ? undefined : (req.user!.assignedBatchIds ?? []);
+  const students = assigned ? db.getStudentsInBatches(assigned) : db.getStudents();
   const batches = db.getBatches();
-  const attendance = db.getAttendanceRecords();
-  const promotions = db.getBeltHistory();
+  const attendance = assigned
+    ? db.getAttendanceRecords().filter((ar) => assigned.includes(ar.batchId))
+    : db.getAttendanceRecords();
+  // Belt history is derived from students, so scope it to assigned batches too.
+  const scopedStudentIds = new Set(students.map((s) => s.id));
+  const promotions = db.getBeltHistory().filter((bh) => scopedStudentIds.has(bh.studentId));
 
   const totalStudents = students.length;
   const activeStudents = students.filter((s) => s.status === StudentStatus.ACTIVE).length;

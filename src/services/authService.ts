@@ -34,7 +34,7 @@ export class AuthService {
   /**
    * Verifies and decodes a signed session token.
    */
-  verifyToken(token: string): { id: string; role: UserRole } | null {
+  verifyToken(token: string): { id: string; role: UserRole; assignedBatchIds?: string[] } | null {
     if (!token) return null;
     const parts = token.split('.');
     if (parts.length !== 2) return null;
@@ -56,7 +56,12 @@ export class AuthService {
         return null; // Token expired
       }
 
-      return { id: userId, role: role as UserRole };
+      // Re-read the live user record so role/assignment changes take effect
+      // without requiring a fresh login.
+      const liveUser = db.getUserById(userId);
+      const assignedBatchIds = liveUser?.assignedBatchIds ?? undefined;
+
+      return { id: userId, role: role as UserRole, assignedBatchIds };
     } catch {
       return null;
     }
@@ -83,6 +88,7 @@ export class AuthService {
         name: user.name,
         email: user.email,
         role: user.role,
+        assignedBatchIds: user.assignedBatchIds ?? [],
       },
     };
   }

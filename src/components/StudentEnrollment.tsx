@@ -13,13 +13,15 @@ import {
   User as UserIcon,
   X,
 } from 'lucide-react';
-import { Student, Batch, BeltRank, StudentStatus } from '../types.js';
+import { Student, Batch, BeltRank, StudentStatus, UserRole } from '../types.js';
 
 interface StudentEnrollmentProps {
   token: string;
   studentToEdit?: Student | null;
   onDone: () => void;
   onSaved?: () => void;
+  currentUserRole?: UserRole;
+  assignedBatchIds?: string[];
 }
 
 // Resize + compress an image file to a compact base64 data URL so it can live
@@ -59,6 +61,8 @@ export default function StudentEnrollment({
   studentToEdit,
   onDone,
   onSaved,
+  currentUserRole,
+  assignedBatchIds,
 }: StudentEnrollmentProps) {
   const isEdit = Boolean(studentToEdit);
   const [batches, setBatches] = useState<Batch[]>([]);
@@ -136,10 +140,15 @@ export default function StudentEnrollment({
         headers: { Authorization: `Bearer ${token}` },
       });
       if (response.ok) {
-        const data = await response.json();
-        setBatches(data);
-        if (data.length > 0 && !studentToEdit && !batchId) {
-          setBatchId(data[0].id);
+        const data: Batch[] = await response.json();
+        // Instructors may only enroll students into their assigned batches.
+        const visible =
+          currentUserRole === UserRole.ADMIN || !assignedBatchIds
+            ? data
+            : data.filter((b) => assignedBatchIds.includes(b.id));
+        setBatches(visible);
+        if (visible.length > 0 && !studentToEdit && !batchId) {
+          setBatchId(visible[0].id);
         }
       }
     } catch (err) {

@@ -231,6 +231,14 @@ export class RelationalDB {
     return [...this.schema.students];
   }
 
+  // Returns students whose batchId is in the provided list. Used to scope
+  // instructor visibility to only the classes the admin assigned them to.
+  getStudentsInBatches(batchIds: string[]): Student[] {
+    if (!batchIds || batchIds.length === 0) return [];
+    const set = new Set(batchIds);
+    return this.schema.students.filter((s) => set.has(s.batchId));
+  }
+
   getStudentById(id: string): Student | undefined {
     return this.schema.students.find((s) => s.id === id);
   }

@@ -19,9 +19,10 @@ import { Batch, Student, AttendanceStatus, UserRole } from '../types.js';
 interface AttendanceMarkerProps {
   token: string;
   userRole: UserRole;
+  assignedBatchIds?: string[];
 }
 
-export default function AttendanceMarker({ token, userRole }: AttendanceMarkerProps) {
+export default function AttendanceMarker({ token, userRole, assignedBatchIds }: AttendanceMarkerProps) {
   const isAdmin = userRole === UserRole.ADMIN;
   const [batches, setBatches] = useState<Batch[]>([]);
   const [selectedBatchId, setSelectedBatchId] = useState('');
@@ -50,9 +51,14 @@ export default function AttendanceMarker({ token, userRole }: AttendanceMarkerPr
       });
       if (response.ok) {
         const data = await response.json();
-        setBatches(data);
-        if (data.length > 0) {
-          setSelectedBatchId(data[0].id);
+        // Instructors may only mark attendance for their assigned batches.
+        const visible =
+          isAdmin || !assignedBatchIds
+            ? data
+            : data.filter((b: Batch) => assignedBatchIds.includes(b.id));
+        setBatches(visible);
+        if (visible.length > 0) {
+          setSelectedBatchId(visible[0].id);
         }
       }
     } catch (err) {

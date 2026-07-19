@@ -21,12 +21,14 @@ test('Full-Stack Integration Test Suite', async (t) => {
   // Reset database before integration checks
   db.clearAll();
 
-  // Dynamically seed instructor user for integration checks
+  // Dynamically seed instructor user for integration checks.
+  // Assigned to b-1 so they can see/mark the student created in that batch below.
   db.createUser({
     name: 'Instructor Ken',
     email: 'instructor@karate.com',
     passwordHash: crypto.createHash('sha256').update('instructor123').digest('hex'),
     role: UserRole.INSTRUCTOR,
+    assignedBatchIds: ['b-1'],
   });
 
   // Tokens
@@ -307,5 +309,168 @@ test('Full-Stack Integration Test Suite', async (t) => {
   });
 
   // Close the server down cleanly
+  server.close();
+});
+
+test('Instructor Class-Scoping Suite (Section 0.5 / Section 11 / Section 14)', async (t) => {
+  const app = await createServer();
+  const server = app.listen(TEST_PORT, '0.0.0.0');
+  db.clearAll();
+
+  // Seed two instructors, each assigned to a different batch.
+  db.createUser({
+    name: 'Sensei A',
+    email: 'a@karate.com',
+    passwordHash: crypto.createHash('sha256').update('password123').digest('hex'),
+    role: UserRole.INSTRUCTOR,
+    assignedBatchIds: ['b-1'],
+  });
+  db.createUser({
+    name: 'Sensei B',
+    email: 'b@karate.com',
+    passwordHash: crypto.createHash('sha256').update('password123').digest('hex'),
+    role: UserRole.INSTRUCTOR,
+    assignedBatchIds: ['b-2'],
+  });
+
+  let adminToken = '';
+  let tokenA = '';
+  let tokenB = '';
+  let studentInB1 = '';
+  let studentInB2 = '';
+
+  await t.test('1. Login as admin and both scoped instructors', async () => {
+    const adminRes = await fetch(`${BASE_URL}/auth/login`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ email: 'admin@karate.com', password: 'admin123' }),
+    });
+    adminToken = (await adminRes.json()).token;
+
+    const aRes = await fetch(`${BASE_URL}/auth/login`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ email: 'a@karate.com', password: 'password123' }),
+    });
+    const aData = await aRes.json();
+    tokenA = aData.token;
+    assert.deepStrictEqual(aData.user.assignedBatchIds, ['b-1'], 'Instructor A token should carry assignedBatchIds');
+
+    const bRes = await fetch(`${BASE_URL}/auth/login`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ email: 'b@karate.com', password: 'password123' }),
+    });
+    tokenB = (await bRes.json()).token;
+  });
+
+  await t.test('2. Admin creates one student in each batch', async () => {
+    const mk = (name: string, email: string, batchId: string) =>
+      fetch(`${BASE_URL}/students`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${adminToken}` },
+        body: JSON.stringify({
+          name, email, phone: '555-0000', dateOfBirth: '2010-01-01', gender: 'male',
+          currentBelt: BeltRank.WHITE, status: StudentStatus.ACTIVE, batchId, joinedDate: '2026-07-01',
+        }),
+      });
+
+    const r1 = await mk('Student One', 'one@karate.com', 'b-1');
+    assert.strictEqual(r1.status, 201);
+    studentInB1 = (await r1.json()).id;
+
+    const r2 = await mk('Student Two', 'two@karate.com', 'b-2');
+    assert.strictEqual(r2.status, 201);
+    studentInB2 = (await r2.json()).id;
+  });
+
+  await t.test('3. Instructor A sees only b-1 students, not b-2', async () => {
+    const res = await fetch(`${BASE_URL}/students`, { headers: { Authorization: `Bearer ${tokenA}` } });
+    assert.strictEqual(res.status, 200);
+    const data = await res.json();
+    const ids = data.students.map((s: any) => s.id);
+    assert.ok(ids.includes(studentInB1), 'Instructor A should see their assigned student');
+    assert.ok(!ids.includes(studentInB2), 'Instructor A must NOT see student from another class');
+    assert.strictEqual(data.pagination.total, 1, 'Instructor A directory total should be 1');
+  });
+
+  await t.test('4. Instructor B sees only b-2 students, not b-1', async () => {
+    const res = await fetch(`${BASE_URL}/students`, { headers: { Authorization: `Bearer ${tokenB}` } });
+    const data = await res.json();
+    const ids = data.students.map((s: any) => s.id);
+    assert.ok(ids.includes(studentInB2), 'Instructor B should see their assigned student');
+    assert.ok(!ids.includes(studentInB1), 'Instructor B must NOT see student from another class');
+  });
+
+  await t.test('5. Instructor A is blocked (403) from viewing b-2 student detail', async () => {
+    const res = await fetch(`${BASE_URL}/students/${studentInB2}`, { headers: { Authorization: `Bearer ${tokenA}` } });
+    assert.strictEqual(res.status, 403, 'Cross-class student detail must be forbidden');
+  });
+
+  await t.test('6. Instructor A is blocked (403) from marking attendance in b-2', async () => {
+    const res = await fetch(`${BASE_URL}/attendance`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${tokenA}` },
+      body: JSON.stringify({
+        date: '2026-07-19', batchId: 'b-2', session: 'Class',
+        records: [{ studentId: studentInB2, status: AttendanceStatus.PRESENT }],
+      }),
+    });
+    assert.strictEqual(res.status, 403, 'Cross-class attendance marking must be forbidden');
+  });
+
+  await t.test('7. Instructor A CAN mark attendance in their own b-1', async () => {
+    const res = await fetch(`${BASE_URL}/attendance`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${tokenA}` },
+      body: JSON.stringify({
+        date: '2026-07-19', batchId: 'b-1', session: 'Class',
+        records: [{ studentId: studentInB1, status: AttendanceStatus.PRESENT }],
+      }),
+    });
+    assert.strictEqual(res.status, 201, 'Own-class attendance marking should succeed');
+  });
+
+  await t.test('8. Instructor A attendance GET is scoped to b-1 only', async () => {
+    const res = await fetch(`${BASE_URL}/attendance?date=2026-07-19`, { headers: { Authorization: `Bearer ${tokenA}` } });
+    const data = await res.json();
+    assert.ok(data.every((r: any) => r.batchId === 'b-1'), 'Instructor A attendance feed must be scoped to b-1');
+  });
+
+  await t.test('9. Dashboard stats are scoped per instructor', async () => {
+    const resA = await fetch(`${BASE_URL}/dashboard/stats`, { headers: { Authorization: `Bearer ${tokenA}` } });
+    const statsA = await resA.json();
+    assert.strictEqual(statsA.totalStudents, 1, 'Instructor A dashboard total should be 1');
+
+    const resAdmin = await fetch(`${BASE_URL}/dashboard/stats`, { headers: { Authorization: `Bearer ${adminToken}` } });
+    const statsAdmin = await resAdmin.json();
+    assert.strictEqual(statsAdmin.totalStudents, 2, 'Admin dashboard total should be 2');
+  });
+
+  await t.test('10. Admin can assign batches to an instructor via API', async () => {
+    const createRes = await fetch(`${BASE_URL}/users`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${adminToken}` },
+      body: JSON.stringify({
+        name: 'Sensei C', email: 'c@karate.com', password: 'password123',
+        role: UserRole.INSTRUCTOR, assignedBatchIds: ['b-3'],
+      }),
+    });
+    assert.strictEqual(createRes.status, 201, 'Admin should create scoped instructor');
+    const c = await createRes.json();
+    assert.deepStrictEqual(c.assignedBatchIds, ['b-3'], 'assignedBatchIds should round-trip');
+
+    // Invalid batch id is rejected
+    const badRes = await fetch(`${BASE_URL}/users`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${adminToken}` },
+      body: JSON.stringify({
+        name: 'Sensei D', email: 'd@karate.com', password: 'password123',
+        role: UserRole.INSTRUCTOR, assignedBatchIds: ['b-999'],
+      }),
+    });
+    assert.strictEqual(badRes.status, 400, 'Unknown batch id must be rejected');
+  });
+
   server.close();
 });

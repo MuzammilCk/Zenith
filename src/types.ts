@@ -20,6 +20,9 @@ export interface User {
   updatedAt?: string;
   lastLogin?: string;
   image?: string; // base64 data URL of the account avatar
+  // Batches (classes) this instructor is assigned to. Admins ignore this
+  // (they see everything). Instructors only see students/attendance for these batches.
+  assignedBatchIds?: string[];
 }
 
 export enum BeltRank {
@@ -109,6 +112,7 @@ export interface LoginResponse {
     name: string;
     email: string;
     role: UserRole;
+    assignedBatchIds?: string[];
   };
 }
 
